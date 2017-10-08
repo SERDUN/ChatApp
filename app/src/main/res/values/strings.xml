@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">ChatApp</string>
+    <string name="user_name">Name </string>
+    <string name="type_connection">Type Connection</string>
+    <string name="connection_conf">Connection conf</string>
+    <string name="ok">Ok</string>
+    <string name="field_name_is_empty">Field name is empty</string>
+    <string name="send">Send</string>
+
+</resources>

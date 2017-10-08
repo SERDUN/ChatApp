@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.dmitro.chatapp.MainActivity">
+
+
+    <Button
+        android:onClick="onClick"
+        android:id="@+id/create_chanal_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Добавити канал 1" />
+
+    <Button
+        android:onClick="onClick"
+
+        android:id="@+id/create_chanal_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="добавити канал 2" />
+
+    <Button
+        android:onClick="onClick"
+
+        android:id="@+id/create_user_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="добавити користувача в канал 1" />
+
+    <Button
+        android:onClick="onClick"
+
+        android:id="@+id/create_user_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="добавити користувача в канал 2" />
+
+    <Button
+        android:onClick="onClick"
+
+        android:id="@+id/create_message_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Добавити повідомлення в канал 1" />
+
+    <Button
+        android:onClick="onClick"
+
+        android:id="@+id/create_message_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Добавити повідомлення в канал 2" />
+</LinearLayout>
