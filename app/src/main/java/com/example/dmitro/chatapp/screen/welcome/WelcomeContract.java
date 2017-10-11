@@ -15,6 +15,10 @@ public class WelcomeContract {
 
         void openConnectTomcatSetting();
 
+        void openWifiDirectSetting();
+
+        void openTCPIPSetting();
+
         boolean isFieldNameEmpty();
 
         void showMessage(int id);
@@ -26,5 +30,7 @@ public class WelcomeContract {
         void saveTypeConnection(String string);
 
         void openNextActivity();
+
+
     }
 }

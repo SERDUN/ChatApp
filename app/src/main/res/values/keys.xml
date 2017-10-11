@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="isServer">isServer</string>
+    <string name="connection_conf">Connection conf</string>
+
+</resources>

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -13,10 +14,10 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.dmitro.chatapp.R;
-import com.example.dmitro.chatapp.data.model.firebase.User;
+import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
 import com.example.dmitro.chatapp.screen.setting.firebase.ChannelFirebaseActivity;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.example.dmitro.chatapp.screen.setting.tcp_ip.TCPIPSettingActivity;
+import com.example.dmitro.chatapp.screen.setting.wifi_direct.PeersWifiDirectActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,8 +32,15 @@ public class WelcomeActivity extends AppCompatActivity implements WelcomeContrac
     @BindView(R.id.nameEditText)
     public EditText nameEditText;
 
+    @BindView(R.id.databaseTestWrite)
+    Button databaseButtonWrite;
+
+    @BindView(R.id.databaseTestRead)
+    Button databaseButtonRead;
+
     private WelcomeContract.Presenter presenter;
 
+    public String TAG = "database_log";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +49,15 @@ public class WelcomeActivity extends AppCompatActivity implements WelcomeContrac
         ButterKnife.bind(this);
         new WelcomePresenter(this, getSharedPreferences(getString(R.string.connection_conf), Context.MODE_PRIVATE));
         initView();
+//        startService(new Intent(this,ClientService.class));
+
+        databaseButtonWrite.setOnClickListener(v -> {
+
+        });
+
+        databaseButtonRead.setOnClickListener(v -> {
+
+        });
 
 
     }
@@ -67,6 +84,26 @@ public class WelcomeActivity extends AppCompatActivity implements WelcomeContrac
             presenter.saveName(nameEditText.getText().toString());
             presenter.openNextActivity();
         });
+
+//
+//        WifiManager wifiMgr = (WifiManager) getSystemService(WIFI_SERVICE);
+//        WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
+//        int ip = wifiInfo.getIpAddress();
+//        String ipAddress = Formatter.formatIpAddress(ip);
+//        int f=4;
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    try {
+//                        ServerSocket serverSocket= new ServerSocket(9090);
+//                        Socket socket=serverSocket.accept();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                }
+//            }).start();
+
     }
 
     @Override
@@ -84,6 +121,18 @@ public class WelcomeActivity extends AppCompatActivity implements WelcomeContrac
     @Override
     public void openConnectTomcatSetting() {
 
+    }
+
+    @Override
+    public void openWifiDirectSetting() {
+        Intent intent = new Intent(this, PeersWifiDirectActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void openTCPIPSetting() {
+        Intent intent = new Intent(this, TCPIPSettingActivity.class);
+        startActivity(intent);
     }
 
     @Override

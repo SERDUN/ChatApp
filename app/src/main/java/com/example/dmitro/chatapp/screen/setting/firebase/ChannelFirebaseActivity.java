@@ -8,8 +8,8 @@ import android.support.v7.widget.RecyclerView;
 
 import com.example.dmitro.chatapp.R;
 import com.example.dmitro.chatapp.data.model.firebase.ChannelKey;
-import com.example.dmitro.chatapp.data.repository.ChatRepositoryManager;
 import com.example.dmitro.chatapp.data.repository.Injection;
+import com.example.dmitro.chatapp.data.repository.managers.ChatRepositoryManager;
 import com.example.dmitro.chatapp.screen.chat.ChatActivity;
 
 import java.util.ArrayList;
@@ -17,7 +17,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 
 public class ChannelFirebaseActivity extends AppCompatActivity implements ChannelFirebaseContract.View {
     private String LOG = "ChannelFirebaseActivity_log";
@@ -34,7 +33,7 @@ public class ChannelFirebaseActivity extends AppCompatActivity implements Channe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_channel_firebase);
         ButterKnife.bind(this);
-        new ChannelFirebasePresenter(this, Injection.provideManager());
+        new ChannelFirebasePresenter(this, (ChatRepositoryManager) Injection.provideManager());
         initView();
         presenter.getChannels();
 

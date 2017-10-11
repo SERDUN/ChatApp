@@ -12,7 +12,9 @@ public enum TypeConnection {
 
     CONNECT_TO_BLUETOOTH("Bluetooth connection"),
 
-    CONNECT_TO_WIFI_DIRECT("Wifi direct connection");
+    CONNECT_TO_WIFI_DIRECT("WifiDirect connection"),
+
+    CONNECT_TO_TCP_IP("TCP_IP connection");
 
     private final String name;
 

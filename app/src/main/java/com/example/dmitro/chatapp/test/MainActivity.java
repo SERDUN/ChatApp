@@ -1,41 +1,106 @@
-package com.example.dmitro.chatapp;
+package com.example.dmitro.chatapp.test;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.IntentFilter;
+import android.net.wifi.p2p.WifiP2pManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
+import android.widget.Button;
 
-import com.example.dmitro.chatapp.data.model.firebase.Channel;
-import com.example.dmitro.chatapp.data.model.firebase.Message;
-import com.example.dmitro.chatapp.data.model.firebase.User;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.example.dmitro.chatapp.R;
 
-import java.util.LinkedList;
-import java.util.List;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
-    List<User> users1 = new LinkedList();
-    List<Message> messages1 = new LinkedList();
+//    List<User> users1 = new LinkedList();
+//    List<Message> messages1 = new LinkedList();
+//
+//
+//    List<User> users2 = new LinkedList();
+//    List<Message> messages2 = new LinkedList();
+//
+//
+//    FirebaseDatabase database;
+//
+//
+//    User user1 = new User("name 1", "email 1");
+//    DatabaseReference myRef;
+
+    IntentFilter intentFilter;
+
+    @BindView(R.id.search_pir)
+    Button searchPir;
 
 
-    List<User> users2 = new LinkedList();
-    List<Message> messages2 = new LinkedList();
+    WifiP2pManager manager;
 
 
-    FirebaseDatabase database;
-
-
-    User user1 = new User("name 1", "email 1");
-    DatabaseReference myRef;
+    BroadcastReceiver broadcastReceiver;
+    private WifiP2pManager mManager;
+    private WifiP2pManager.Channel mChannel;
+    private BRDirect mReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        myRef = FirebaseDatabase.getInstance().getReference("Channels");
+        ButterKnife.bind(this);
+        mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
+        mChannel = mManager.initialize(this, getMainLooper(), null);
+        initView();
+        initFilter();
+        mReceiver = new BRDirect(mManager, mChannel, this);
+        registerReceiver(mReceiver, intentFilter);
+
+
+
+
+        mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
+            @Override
+            public void onSuccess() {
+            }
+
+            @Override
+            public void onFailure(int reason) {
+
+
+            }
+        });
+
+
+
+//        myRef = FirebaseDatabase.getInstance().getReference("Channels");
 
     }
 
+    private void initFilter() {
+        intentFilter = new IntentFilter();
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_DISCOVERY_CHANGED_ACTION);
+        intentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+
+    }
+
+    private void initView() {
+        searchPir.setOnClickListener(v -> {
+
+
+        });
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mReceiver = new BRDirect(mManager, mChannel, this);
+        registerReceiver(mReceiver, intentFilter);
+
+
+    }
 //        users1.add(user1);
 //        users1.add(new User("name 2", "email 2"));
 //        users1.add(new User("name 3", "email 3"));

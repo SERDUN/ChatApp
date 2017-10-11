@@ -7,8 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.dmitro.chatapp.R;
-import com.example.dmitro.chatapp.data.model.firebase.ChannelKey;
-import com.example.dmitro.chatapp.data.model.firebase.Message;
+import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
 
 import java.util.ArrayList;
 
@@ -67,9 +66,9 @@ public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecycl
             });
         }
 
-        public void bindView(Message message) {
-            authorTextView.setText(message.getAuthor().getLogin());
-            messageTextView.setText(message.getText());
+        public void bindView(Message FMessage) {
+            authorTextView.setText(FMessage.getAuthor());
+            messageTextView.setText(FMessage.getMessage());
         }
     }
 }

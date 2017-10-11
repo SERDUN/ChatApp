@@ -1,12 +1,13 @@
-package com.example.dmitro.chatapp.screen.chat;
+package com.example.dmitro.chatapp.screen.chat.presenters;
 
 import android.content.SharedPreferences;
 
 import com.example.dmitro.chatapp.ChatApp;
 import com.example.dmitro.chatapp.R;
-import com.example.dmitro.chatapp.data.model.firebase.Message;
 import com.example.dmitro.chatapp.data.model.firebase.User;
-import com.example.dmitro.chatapp.data.repository.ChatRepositoryManager;
+import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
+import com.example.dmitro.chatapp.data.repository.managers.ChatRepositoryManager;
+import com.example.dmitro.chatapp.screen.chat.ChatContract;
 
 /**
  * Created by dmitro on 08.10.17.
@@ -38,8 +39,8 @@ public class ChatPresenter implements ChatContract.Presenter {
     }
 
     @Override
-    public void sendMessage(String name) {
-        chatRepositoryManager.sendMessage(keyChannel, new Message(System.currentTimeMillis(), user, name), s -> {
+    public void sendMessage(String message) {
+        chatRepositoryManager.sendMessage(keyChannel, new Message( user.getLogin(), message,System.currentTimeMillis()), s -> {
             view.showMessages(s);
         }, f -> {
         }, () -> {

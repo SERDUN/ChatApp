@@ -3,5 +3,7 @@
     <string-array name="type_connection">
         <item>Firebase connection</item>
         <item>Tomcat connection</item>
+        <item>WifiDirect connection</item>
+        <item>TCP_IP connection</item>
     </string-array>
 </resources>

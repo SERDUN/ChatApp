@@ -3,6 +3,7 @@ package com.example.dmitro.chatapp.data.repository.remote.firebase;
 import com.example.dmitro.chatapp.data.model.firebase.Channel;
 import com.example.dmitro.chatapp.data.model.firebase.ChannelKey;
 import com.example.dmitro.chatapp.data.model.firebase.Message;
+import com.example.dmitro.chatapp.data.model.wifiDirect.Request;
 import com.example.dmitro.chatapp.data.repository.ChatDataSource;
 import com.example.dmitro.chatapp.utils.event.Event0;
 import com.example.dmitro.chatapp.utils.event.Event1;
@@ -13,9 +14,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by dmitro on 08.10.17.
@@ -62,51 +61,76 @@ public class RemoteFirebaseChatRepository implements ChatDataSource {
     }
 
     @Override
-    public void getMessages(String key, Event1<List<Message>> channels, Event1<String> failure, Event0 complate) {
-        DatabaseReference listRef = firebaseDatabase.getInstance().getReference("Channels").child(key).child("messages");
-        listRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                    List<Message> messages = new ArrayList<Message>();
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    messages.add(postSnapshot.getValue(Message.class));
-                }
-                channels.call(messages);
-                complate.call();
-            }
+    public void getMessages(String key, Event1<List<com.example.dmitro.chatapp.data.model.wifiDirect.Message>> messages, Event1<String> failure, Event0 complate) {
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                failure.call(databaseError.getMessage());
-                complate.call();
+    }
 
-            }
-        });
+//    @Override
+//    public void getMessages(String key, Event1<List<com.example.dmitro.chatapp.data.model.wifiDirect.Message>> messages, Event1<String> failure, Event0 complate) {
+//        DatabaseReference listRef = firebaseDatabase.getInstance().getReference("Channels").child(key).child("messages");
+//        listRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                    List<Message> Messages = new ArrayList<Message>();
+//                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+//                    Messages.add(postSnapshot.getValue(Message.class));
+//                }
+//                messages.call(Messages);
+//                complate.call();
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                failure.call(databaseError.getMessage());
+//                complate.call();
+//
+//            }
+//        });
+//
+//    }
+
+    @Override
+    public void sendMessage(String key, com.example.dmitro.chatapp.data.model.wifiDirect.Message message, Event1<List<com.example.dmitro.chatapp.data.model.wifiDirect.Message>> s, Event1<String> f, Event0 c) {
+
+    }
+
+//    @Override
+//    public void sendMessage(String key, Message Message, Event1<List<Message>> s, Event1<String> f, Event0 c) {
+//        DatabaseReference listRef = firebaseDatabase.getInstance().getReference("Channels").child(key).child("messages");
+//        String id = listRef.push().getKey();
+//        listRef.child(id).setValue(Message);
+//        listRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                List<Message> Messages = new ArrayList<Message>();
+//                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+//                    Messages.add(postSnapshot.getValue(Message.class));
+//                    s.call(Messages);
+//                    c.call();
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                f.call(databaseError.getMessage());
+//                c.call();
+//            }
+//        });
+//
+//    }
+
+    @Override
+    public void getLastMessage(Event1<Request> s, Event1<String> f, Event0 c) {
 
     }
 
     @Override
-    public void sendMessage(String key, Message message, Event1<List<Message>> s, Event1<String> f, Event0 c) {
-        DatabaseReference listRef = firebaseDatabase.getInstance().getReference("Channels").child(key).child("messages");
-        String id = listRef.push().getKey();
-        listRef.child(id).setValue(message);
-        listRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                List<Message> messages = new ArrayList<Message>();
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    messages.add(postSnapshot.getValue(Message.class));
-                    s.call(messages);
-                    c.call();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                f.call(databaseError.getMessage());
-                c.call();
-            }
-        });
+    public void addMessageInDatabase(com.example.dmitro.chatapp.data.model.wifiDirect.Message message, Event1<com.example.dmitro.chatapp.data.model.wifiDirect.Message> s, Event1<String> f, Event0 c) {
 
     }
+
+//    @Override
+//    public void addMessageInDatabase(Request request) {
+//
+//    }
 }

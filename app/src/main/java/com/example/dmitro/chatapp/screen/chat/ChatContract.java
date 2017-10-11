@@ -2,8 +2,8 @@ package com.example.dmitro.chatapp.screen.chat;
 
 import com.example.dmitro.chatapp.BasePresenter;
 import com.example.dmitro.chatapp.BaseView;
-import com.example.dmitro.chatapp.data.model.firebase.Message;
-import com.example.dmitro.chatapp.screen.welcome.WelcomeContract;
+import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
+import com.example.dmitro.chatapp.data.model.wifiDirect.Request;
 
 import java.util.List;
 
@@ -12,12 +12,14 @@ import java.util.List;
  */
 
 public class ChatContract {
-    interface View extends BaseView<Presenter> {
+    public interface View extends BaseView<Presenter> {
         void showMessage(int id);
-        void showMessages(List<Message> messages);
+        void updateShowMessage(Request request);
+        void showMessages(List<Message> FMessages);
+
     }
 
-    interface Presenter extends BasePresenter {
+    public interface Presenter extends BasePresenter {
         public void getMessages();
         public void sendMessage(String name);
 

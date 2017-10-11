@@ -55,7 +55,14 @@ public class WelcomePresenter implements WelcomeContract.Presenter {
                 case CONNECT_TO_SERVER_TOMCAT:
                     view.openConnectTomcatSetting();
                     break;
-                //// TODO: 08.10.17 Please complete later with other options
+                case CONNECT_TO_WIFI_DIRECT:
+                    view.openWifiDirectSetting();
+                    break;
+                case CONNECT_TO_TCP_IP:
+                    view.openTCPIPSetting();
+
+
+                    //// TODO: 08.10.17 Please complete later with other options
             }
 
         }

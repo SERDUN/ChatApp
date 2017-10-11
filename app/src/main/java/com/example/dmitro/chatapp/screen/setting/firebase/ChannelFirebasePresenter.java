@@ -1,11 +1,7 @@
 package com.example.dmitro.chatapp.screen.setting.firebase;
 
 
-import com.example.dmitro.chatapp.data.model.firebase.ChannelKey;
-import com.example.dmitro.chatapp.data.repository.ChatRepositoryManager;
-import com.example.dmitro.chatapp.data.repository.Injection;
-
-import java.util.List;
+import com.example.dmitro.chatapp.data.repository.managers.ChatRepositoryManager;
 
 /**
  * Created by dmitro on 08.10.17.
