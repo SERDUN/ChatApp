@@ -1,4 +1,4 @@
-package com.example.dmitro.chatapp.screen.chat;
+package com.example.dmitro.chatapp.screen.chat.wifi_direct;
 
 import android.content.ComponentName;
 import android.content.Intent;
@@ -15,13 +15,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dmitro.chatapp.R;
-import com.example.dmitro.chatapp.connection.wifiDirectionHost.ClientService;
-import com.example.dmitro.chatapp.connection.wifiDirectionHost.ServerService;
+import com.example.dmitro.chatapp.connection.sockets.ClientService;
+import com.example.dmitro.chatapp.connection.sockets.ServerService;
 import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
 import com.example.dmitro.chatapp.data.model.wifiDirect.Request;
 import com.example.dmitro.chatapp.data.repository.Injection;
 import com.example.dmitro.chatapp.data.repository.managers.WifiDirectChatRepositoryManager;
-import com.example.dmitro.chatapp.screen.chat.presenters.ChatWifiDirectPresenter;
+import com.example.dmitro.chatapp.screen.chat.wifi_direct.presenters.ChatWifiDirectPresenter;
 import com.example.dmitro.chatapp.utils.MyUtils;
 
 import java.util.ArrayList;
@@ -29,6 +29,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.example.dmitro.chatapp.ChatApp.EXTRAS_CONNECT;
 
 public class ChatActivity extends AppCompatActivity implements ChatContract.View {
     private ChatContract.Presenter presenter;
@@ -126,13 +128,13 @@ public class ChatActivity extends AppCompatActivity implements ChatContract.View
 
         sendButton.setOnClickListener(v -> {
             if (MyUtils.WIFIDirect.isServer()) {
-                intent.putExtra(ClientService.EXTRAS_CONNECT, true);
-                intent.putExtra(EXTRAS_MESSAGE, messageEditText.getText().toString());
+                intent.putExtra(EXTRAS_CONNECT, true);
+                intent.putExtra(EXTRAS_MESSAGE, new Request(MyUtils.WIFIDirect.getCurrentUser(), messageEditText.getText().toString(), System.currentTimeMillis()));
                 startService(intent);
                 messageEditText.setText("");
             } else {
-                intent.putExtra(ClientService.EXTRAS_CONNECT, true);
-                intent.putExtra(EXTRAS_MESSAGE, messageEditText.getText().toString());
+                intent.putExtra(EXTRAS_CONNECT, true);
+                intent.putExtra(EXTRAS_MESSAGE, new Request(MyUtils.WIFIDirect.getCurrentUser(), messageEditText.getText().toString(), System.currentTimeMillis()));
                 startService(intent);
                 messageEditText.setText("");
             }

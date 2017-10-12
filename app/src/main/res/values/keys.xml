@@ -2,5 +2,7 @@
 <resources>
     <string name="isServer">isServer</string>
     <string name="connection_conf">Connection conf</string>
+    <string name="default_port">8181</string>
+    <string name="socket_timeout">5000</string>
 
 </resources>

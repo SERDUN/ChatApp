@@ -1,6 +1,6 @@
 // Copyright 2011 Google Inc. All Rights Reserved.
 
-package com.example.dmitro.chatapp.connection.wifiDirectionHost;
+package com.example.dmitro.chatapp.connection.sockets;
 
 import android.app.Service;
 import android.content.Intent;
@@ -9,10 +9,10 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.example.dmitro.chatapp.R;
 import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
 import com.example.dmitro.chatapp.data.model.wifiDirect.Request;
-import com.example.dmitro.chatapp.data.repository.Injection;
-import com.example.dmitro.chatapp.data.repository.managers.WifiDirectChatRepositoryManager;
+import com.example.dmitro.chatapp.data.provider.ContractClass;
 import com.example.dmitro.chatapp.utils.MyUtils;
 
 import java.io.IOException;
@@ -21,18 +21,15 @@ import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-import static com.example.dmitro.chatapp.screen.chat.ChatActivity.EXTRAS_DISCONNECT;
-import static com.example.dmitro.chatapp.screen.chat.ChatActivity.EXTRAS_MESSAGE;
+import static com.example.dmitro.chatapp.ChatApp.EXTRAS_CONNECT;
+import static com.example.dmitro.chatapp.ChatApp.EXTRAS_GROUP_OWNER_ADDRESS;
+import static com.example.dmitro.chatapp.ChatApp.EXTRAS_GROUP_OWNER_PORT;
+import static com.example.dmitro.chatapp.screen.chat.wifi_direct.ChatActivity.EXTRAS_DISCONNECT;
+import static com.example.dmitro.chatapp.screen.chat.wifi_direct.ChatActivity.EXTRAS_MESSAGE;
 
 public class ClientService extends Service {
 
     String TAG = "ClientServiceLOG";
-
-    private static final int SOCKET_TIMEOUT = 5000;
-    public static final String EXTRAS_GROUP_OWNER_ADDRESS = "go_host";
-    public static final String EXTRAS_GROUP_OWNER_PORT = "go_port";
-    public static final String EXTRAS_CONNECT = "go_connect";
-
 
     private Socket socket;
     private ObjectOutputStream objectOutputStream;
@@ -65,7 +62,7 @@ public class ClientService extends Service {
     private void sendMessage(Intent intent) {
         try {
             objectOutputStream.flush();
-            Request request = new Request(MyUtils.WIFIDirect.getCurrentUser(), intent.getStringExtra(EXTRAS_MESSAGE), System.currentTimeMillis());
+            Request request = (Request) intent.getSerializableExtra(EXTRAS_MESSAGE);
             objectOutputStream.writeObject(request);
             objectOutputStream.flush();
 //            ServerService.copyFile(in, objectOutputStream);
@@ -76,6 +73,7 @@ public class ClientService extends Service {
     }
 
     private void createConnection(Intent intent) {
+        Log.d("dddddd", "createConnection: client thread started");
         new Thread(() -> {
             socket = new Socket();
             int port = intent.getExtras().getInt(EXTRAS_GROUP_OWNER_PORT);
@@ -85,7 +83,7 @@ public class ClientService extends Service {
             try {
                 Log.d(TAG, "Opening client socket - ");
                 socket.bind(null);
-                socket.connect((new InetSocketAddress(host, port)), SOCKET_TIMEOUT);
+                socket.connect((new InetSocketAddress(host, port)), Integer.parseInt(getString(R.string.socket_timeout)));
                 objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
                 objectInputStream = new ObjectInputStream(socket.getInputStream());
                 listenerServer(objectInputStream);
@@ -104,14 +102,13 @@ public class ClientService extends Service {
 
 
     private void listenerServer(ObjectInputStream o) {
-
-        WifiDirectChatRepositoryManager manager = (WifiDirectChatRepositoryManager) Injection.provideManager();
         new Thread(() -> {
             try {
                 while (true) {
                     Request request = (Request) o.readObject();
-                    Log.d(TAG, "listenerServer: " + request.toString());
-                    manager.addMessageInDatabase(Message.getInstanceFromRequest(request), null, null, null);
+                    getContentResolver().insert(ContractClass.Messages.CONTENT_URI,
+                            MyUtils.Converter.createContentValues(Message.getInstanceFromRequest(request)));
+
 
                 }
             } catch (IOException e) {

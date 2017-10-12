@@ -1,4 +1,4 @@
-package com.example.dmitro.chatapp.screen.chat;
+package com.example.dmitro.chatapp.screen.chat.wifi_direct;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -33,6 +33,13 @@ public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecycl
         notifyDataSetChanged();
 
     }
+
+    public void addMessage(Message message) {
+        messages.add(message);
+        notifyDataSetChanged();
+    }
+
+    ;
 
     @Override
     public ChannelHolder onCreateViewHolder(ViewGroup parent, int viewType) {

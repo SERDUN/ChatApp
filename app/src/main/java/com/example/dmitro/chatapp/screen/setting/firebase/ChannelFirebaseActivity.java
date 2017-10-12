@@ -10,7 +10,7 @@ import com.example.dmitro.chatapp.R;
 import com.example.dmitro.chatapp.data.model.firebase.ChannelKey;
 import com.example.dmitro.chatapp.data.repository.Injection;
 import com.example.dmitro.chatapp.data.repository.managers.ChatRepositoryManager;
-import com.example.dmitro.chatapp.screen.chat.ChatActivity;
+import com.example.dmitro.chatapp.screen.chat.wifi_direct.ChatActivity;
 
 import java.util.ArrayList;
 import java.util.List;

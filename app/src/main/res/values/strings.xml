@@ -7,11 +7,16 @@
     <string name="send">Send</string>
     <string name="create_server">Create server</string>
     <string name="connect_to_server">Connect to server</string>
-
-
-
-
-
+    <string name="your_ip">your IP</string>
+    <string name="your_port">your_port</string>
+    <string name="start_server">Start server</string>
+    <string name="ip_servers">IP servers</string>
+    <string name="port_servers">Port servers</string>
+    <string name="connect">Connect</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="enable_connection_in_chat_session">Enable connection in chat session</string>
+    <string name="go_to_the_dialogue_page">dialogue page</string>
 
 
 </resources>

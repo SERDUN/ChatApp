@@ -1,4 +1,4 @@
-package com.example.dmitro.chatapp.connection.wifiDirectionHost;
+package com.example.dmitro.chatapp.connection.sockets;
 
 import com.example.dmitro.chatapp.data.model.wifiDirect.Request;
 

@@ -8,14 +8,9 @@
     tools:context="com.example.dmitro.chatapp.screen.chat.wifi_direct.ChatActivity">
 
 
-    <TextView
-        android:id="@+id/isServerTV"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-         />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/messagesTV"
+        android:id="@+id/tcpMessagesTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="10" />
@@ -30,13 +25,13 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/sendButton"
+            android:id="@+id/stcpSendButton"
             android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:text="@string/send" />
 
         <EditText
-            android:id="@+id/textMessageEdit"
+            android:id="@+id/tcpTextMessageEdit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"

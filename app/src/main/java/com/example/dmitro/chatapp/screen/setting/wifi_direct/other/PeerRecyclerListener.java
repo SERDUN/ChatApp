@@ -1,4 +1,4 @@
-package com.example.dmitro.chatapp.screen.setting.wifi_direct;
+package com.example.dmitro.chatapp.screen.setting.wifi_direct.other;
 
 import android.net.wifi.p2p.WifiP2pDevice;
 

@@ -4,6 +4,8 @@ import com.example.dmitro.chatapp.data.model.firebase.ChannelKey;
 import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
 import com.example.dmitro.chatapp.data.model.wifiDirect.Request;
 import com.example.dmitro.chatapp.data.repository.ChatDataSource;
+import com.example.dmitro.chatapp.utils.Observable;
+import com.example.dmitro.chatapp.utils.Observer;
 import com.example.dmitro.chatapp.utils.event.Event0;
 import com.example.dmitro.chatapp.utils.event.Event1;
 
@@ -90,7 +92,7 @@ public class WifiDirectChatRepositoryManager implements ChatDataSource, Observab
     @Override
     public <T> void notifyObserver(T t) {
         for (Observer observer : observers) {
-            observer.update();
+            observer.update(null);
         }
 
 

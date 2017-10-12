@@ -23,6 +23,7 @@ public class Injection {
                 break;
             case CONNECT_TO_SERVER_TOMCAT:
                 break;
+            case CONNECT_TO_TCP_IP:
             case CONNECT_TO_WIFI_DIRECT:
                 return  WifiDirectChatRepositoryManager.getInstance(LocalFirebaseChatRepository.getInstance(),
                         RemoteFirebaseChatRepository.getInstance());

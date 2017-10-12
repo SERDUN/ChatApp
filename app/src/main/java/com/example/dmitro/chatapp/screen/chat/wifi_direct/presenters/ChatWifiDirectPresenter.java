@@ -1,9 +1,9 @@
-package com.example.dmitro.chatapp.screen.chat.presenters;
+package com.example.dmitro.chatapp.screen.chat.wifi_direct.presenters;
 
 import android.util.Log;
 
 import com.example.dmitro.chatapp.data.repository.managers.WifiDirectChatRepositoryManager;
-import com.example.dmitro.chatapp.screen.chat.ChatContract;
+import com.example.dmitro.chatapp.screen.chat.wifi_direct.ChatContract;
 
 /**
  * Created by dmitro on 11.10.17.
@@ -18,19 +18,19 @@ public class ChatWifiDirectPresenter implements ChatContract.Presenter {
     public ChatWifiDirectPresenter(ChatContract.View view, WifiDirectChatRepositoryManager wifiDirectChatRepositoryManager) {
         this.view = view;
         this.wifiDirectChatRepositoryManager = wifiDirectChatRepositoryManager;
-        init();
+//        init();
     }
 
-    private void init() {
-        wifiDirectChatRepositoryManager.registerObserver(() -> {
-            wifiDirectChatRepositoryManager.getMessages("", s -> {
-                view.showMessages(s);
-            }, f -> {
-            }, () -> {
-            });
-        });
-
-    }
+//    private void init() {
+//        wifiDirectChatRepositoryManager.registerObserver(cj -> {
+//            wifiDirectChatRepositoryManager.getMessages("", s -> {
+//                view.showMessages(s);
+//            }, f -> {
+//            }, () -> {
+//            });
+//        });
+//
+//    }
 
     @Override
     public void getMessages() {

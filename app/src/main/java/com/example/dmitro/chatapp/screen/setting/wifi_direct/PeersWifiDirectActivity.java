@@ -7,37 +7,47 @@ import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.dmitro.chatapp.R;
-import com.example.dmitro.chatapp.connection.wifiDirectionHost.ClientService;
-import com.example.dmitro.chatapp.connection.wifiDirectionHost.ServerService;
-import com.example.dmitro.chatapp.screen.chat.ChatActivity;
-import com.example.dmitro.chatapp.utils.MyUtils;
+import com.example.dmitro.chatapp.screen.setting.tcp_ip.ViewPagerAdapter;
+import com.example.dmitro.chatapp.screen.setting.wifi_direct.create_server.CreateServerFragment;
+import com.example.dmitro.chatapp.screen.setting.wifi_direct.create_server.CreateServerPresenter;
+import com.example.dmitro.chatapp.screen.setting.wifi_direct.other.WiFiDirectBroadcastReceiver;
+import com.example.dmitro.chatapp.screen.setting.wifi_direct.searchServer.ConnectionToServerFragment;
+import com.example.dmitro.chatapp.screen.setting.wifi_direct.searchServer.ConnectionToServerPresenter;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class PeersWifiDirectActivity extends AppCompatActivity implements PeersWifiDirectContract.View {
+
+
     public static final String TAG = "WifiDirectActivity_log";
+
+
+    @BindView(R.id.tabs)
+    TabLayout tabLayout;
+    @BindView(R.id.viewpager)
+    ViewPager viewPager;
+
+    private PeersWifiDirectContract.Presenter presenter;
+
+    public WifiP2pManager manager;
+    public WifiP2pManager.Channel channel;
+    public WiFiDirectBroadcastReceiver receiver;
+
     private IntentFilter intentFilter;
 
-    PeersWifiDirectContract.Presenter presenter;
 
-    private WifiP2pManager manager;
-    private WifiP2pManager.Channel channel;
-    private WiFiDirectBroadcastReceiver receiver;
-
-    @BindView(R.id.peersRV)
-    public RecyclerView recyclerView;
-
-    private PeerRecyclerAdapter peerRecyclerAdapter;
+    private ConnectionToServerFragment connectionToServerFragment;
+    private CreateServerFragment createServerFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,66 +56,83 @@ public class PeersWifiDirectActivity extends AppCompatActivity implements PeersW
         ButterKnife.bind(this);
         new PeersWifiDirectPresenter(this);
         init();
+        initWifiManager();
         initIntentFilter();
         initListener();
     }
 
-    private void init() {
-        peerRecyclerAdapter = new PeerRecyclerAdapter(new ArrayList<>(), peer -> {
-            connectToDevice(peer);
-        });
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(getBaseContext()));
-        recyclerView.setAdapter(peerRecyclerAdapter);
-
+    private void initWifiManager() {
         manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
         channel = manager.initialize(this, getMainLooper(), null);
+    }
 
+    private void init() {
+
+        tabLayout.setupWithViewPager(viewPager);
+        createServerFragment = CreateServerFragment.getInstance();
+        connectionToServerFragment = ConnectionToServerFragment.getInstance();
+
+        connectionToServerFragment = ConnectionToServerFragment.getInstance();
+        createServerFragment = CreateServerFragment.getInstance();
+
+        setupViewPager(viewPager);
+
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+        new CreateServerPresenter(createServerFragment);
+        new ConnectionToServerPresenter(connectionToServerFragment);
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(connectionToServerFragment, getString(R.string.connect_to_server));
+        adapter.addFragment(createServerFragment, getString(R.string.create_server));
+
+        viewPager.setAdapter(adapter);
     }
 
     private void initListener() {
 
-        manager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
-            @Override
-            public void onSuccess() {
-            }
+        manager.discoverPeers(channel, connectionToServerFragment);
+//        manager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
+//            @Override
+//            public void onSuccess() {
+//                Toast.makeText(PeersWifiDirectActivity.this, "Success discover pears", Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onFailure(int reason) {
+//
+//
+//            }
+//        });
+//        WifiP2pManager.PeerListListener peerListListener = wifiP2pDeviceList -> {
+//            ArrayList<WifiP2pDevice> list = new ArrayList(wifiP2pDeviceList.getDeviceList());
+//
+//
+//        };
 
-            @Override
-            public void onFailure(int reason) {
+//        WifiP2pManager.ConnectionInfoListener connectionInfoListener = info -> {
+//
+//            if (info.groupFormed && info.isGroupOwner) {
+////                Intent intent = new Intent(this, ServerService.class);
+////                startService(intent);
+////                MyUtils.WIFIDirect.setServerType();
+////                Intent chatIntent = new Intent(this, TCPChatActivity.class);
+////                startActivity(chatIntent);
+//
+//            } else if (info.groupFormed) {
+////                Intent intent = new Intent(this, ClientService.class);
+////                intent.putExtra(EXTRAS_GROUP_OWNER_ADDRESS,
+////                        info.groupOwnerAddress.getHostAddress());
+////                intent.putExtra(EXTRAS_GROUP_OWNER_PORT, Integer.valueOf(getString(R.string.default_port)));
+////                startService(intent);
+////
+////                Intent chatIntent = new Intent(this, TCPChatActivity.class);
+////                startActivity(chatIntent);
+//            }
+//        };
 
 
-            }
-        });
-        WifiP2pManager.PeerListListener peerListListener = wifiP2pDeviceList -> {
-            ArrayList<WifiP2pDevice> list = new ArrayList(wifiP2pDeviceList.getDeviceList());
-
-            peerRecyclerAdapter.updateData(list);
-
-        };
-
-        WifiP2pManager.ConnectionInfoListener connectionInfoListener = info -> {
-
-            if (info.groupFormed && info.isGroupOwner) {
-                Intent intent = new Intent(this, ServerService.class);
-                startService(intent);
-                MyUtils.WIFIDirect.setServerType();
-                Intent chatIntent = new Intent(this, ChatActivity.class);
-                startActivity(chatIntent);
-
-            } else if (info.groupFormed) {
-                Intent intent = new Intent(this, ClientService.class);
-                intent.putExtra(ClientService.EXTRAS_GROUP_OWNER_ADDRESS,
-                        info.groupOwnerAddress.getHostAddress());
-                intent.putExtra(ClientService.EXTRAS_GROUP_OWNER_PORT, 8988);
-                startService(intent);
-
-                Intent chatIntent = new Intent(this, ChatActivity.class);
-                startActivity(chatIntent);
-            }
-        };
-
-
-        receiver = new WiFiDirectBroadcastReceiver(manager, channel, this, peerListListener, connectionInfoListener);
+        receiver = new WiFiDirectBroadcastReceiver(manager, channel, this, connectionToServerFragment, connectionToServerFragment);
         registerReceiver(receiver, intentFilter);
     }
 
@@ -145,24 +172,7 @@ public class PeersWifiDirectActivity extends AppCompatActivity implements PeersW
         unregisterReceiver(receiver);
     }
 
-    private void connectToDevice(WifiP2pDevice device) {
-        WifiP2pConfig config = new WifiP2pConfig();
-        config.deviceAddress = device.deviceAddress;
-        manager.connect(channel, config, new WifiP2pManager.ActionListener() {
 
-            @Override
-            public void onSuccess() {
-                Log.d(TAG, "connected");
-
-
-            }
-
-            @Override
-            public void onFailure(int reason) {
-                Log.d(TAG, "failure");
-            }
-        });
-    }
 
     @Override
     protected void onDestroy() {
@@ -181,7 +191,12 @@ public class PeersWifiDirectActivity extends AppCompatActivity implements PeersW
         });
 
 
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        createServerFragment.onActivityResult(requestCode, resultCode, data);
+        connectionToServerFragment.onActivityResult(requestCode, resultCode, data);
 
     }
 }

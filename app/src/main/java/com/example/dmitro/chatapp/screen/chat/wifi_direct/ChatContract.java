@@ -1,4 +1,4 @@
-package com.example.dmitro.chatapp.screen.chat;
+package com.example.dmitro.chatapp.screen.chat.wifi_direct;
 
 import com.example.dmitro.chatapp.BasePresenter;
 import com.example.dmitro.chatapp.BaseView;

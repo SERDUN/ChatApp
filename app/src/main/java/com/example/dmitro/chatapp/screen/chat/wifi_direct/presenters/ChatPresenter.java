@@ -1,4 +1,4 @@
-package com.example.dmitro.chatapp.screen.chat.presenters;
+package com.example.dmitro.chatapp.screen.chat.wifi_direct.presenters;
 
 import android.content.SharedPreferences;
 
@@ -7,7 +7,7 @@ import com.example.dmitro.chatapp.R;
 import com.example.dmitro.chatapp.data.model.firebase.User;
 import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
 import com.example.dmitro.chatapp.data.repository.managers.ChatRepositoryManager;
-import com.example.dmitro.chatapp.screen.chat.ChatContract;
+import com.example.dmitro.chatapp.screen.chat.wifi_direct.ChatContract;
 
 /**
  * Created by dmitro on 08.10.17.

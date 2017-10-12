@@ -15,7 +15,16 @@ import io.realm.RealmConfiguration;
  */
 
 public class ChatApp extends Application {
+    public static final String EXTRAS_GROUP_OWNER_PORT = "go_port";
+    public static final String EXTRAS_GROUP_OWNER_ADDRESS = "go_host";
+    public static final String EXTRAS_CONNECT = "go_connect";
     private static ChatApp instance;
+
+
+    public final static int STATUS_SERVER_STARTED_SUCCESS = 101;
+    public final static int STATUS_SERVER_STARTED_FEILURE = 102;
+
+    public final static String PARAM_PINTENT = "pendingIntent";
 
     public static ChatApp getInstance() {
         return instance;

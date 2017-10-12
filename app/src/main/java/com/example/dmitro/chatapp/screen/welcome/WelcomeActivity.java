@@ -1,7 +1,11 @@
 package com.example.dmitro.chatapp.screen.welcome;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.ContentObserver;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +19,8 @@ import android.widget.Toast;
 
 import com.example.dmitro.chatapp.R;
 import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
+import com.example.dmitro.chatapp.data.model.wifiDirect.User;
+import com.example.dmitro.chatapp.data.provider.ContractClass;
 import com.example.dmitro.chatapp.screen.setting.firebase.ChannelFirebaseActivity;
 import com.example.dmitro.chatapp.screen.setting.tcp_ip.TCPIPSettingActivity;
 import com.example.dmitro.chatapp.screen.setting.wifi_direct.PeersWifiDirectActivity;
@@ -23,6 +29,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class WelcomeActivity extends AppCompatActivity implements WelcomeContract.View {
+
     @BindView(R.id.typeConnectionSpinner)
     public Spinner typeConnectionSpinner;
 
@@ -49,18 +56,30 @@ public class WelcomeActivity extends AppCompatActivity implements WelcomeContrac
         ButterKnife.bind(this);
         new WelcomePresenter(this, getSharedPreferences(getString(R.string.connection_conf), Context.MODE_PRIVATE));
         initView();
-//        startService(new Intent(this,ClientService.class));
+
+
+
+
+
 
         databaseButtonWrite.setOnClickListener(v -> {
+//            Message message = new Message("test", "message", System.currentTimeMillis());
+//            getContentResolver().insert(ContractClass.Messages.CONTENT_URI, createContentValues(message));
+
 
         });
 
         databaseButtonRead.setOnClickListener(v -> {
 
+
         });
 
 
     }
+
+
+
+
 
     private void initView() {
         final String[] arrayTypeConnection = getResources().getStringArray(R.array.type_connection);
@@ -85,24 +104,6 @@ public class WelcomeActivity extends AppCompatActivity implements WelcomeContrac
             presenter.openNextActivity();
         });
 
-//
-//        WifiManager wifiMgr = (WifiManager) getSystemService(WIFI_SERVICE);
-//        WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
-//        int ip = wifiInfo.getIpAddress();
-//        String ipAddress = Formatter.formatIpAddress(ip);
-//        int f=4;
-//            new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    try {
-//                        ServerSocket serverSocket= new ServerSocket(9090);
-//                        Socket socket=serverSocket.accept();
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//
-//                }
-//            }).start();
 
     }
 

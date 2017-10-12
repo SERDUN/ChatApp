@@ -1,4 +1,4 @@
-package com.example.dmitro.chatapp.data.repository.managers;
+package com.example.dmitro.chatapp.utils;
 
 /**
  * Created by dmitro on 11.10.17.
