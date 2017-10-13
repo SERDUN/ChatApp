@@ -31,11 +31,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_CONNECT;
+import static com.example.dmitro.chatapp.ChatApp.EXTRAS_DISCONNECT;
 
 public class ChatActivity extends AppCompatActivity implements ChatContract.View {
     private ChatContract.Presenter presenter;
-
-    public static final String EXTRAS_DISCONNECT = "go_disconnect";
 
 
     @BindView(R.id.messagesTV)

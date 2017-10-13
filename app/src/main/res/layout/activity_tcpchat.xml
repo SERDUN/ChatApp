@@ -8,12 +8,17 @@
     tools:context="com.example.dmitro.chatapp.screen.chat.wifi_direct.ChatActivity">
 
 
+    <Button
+        android:id="@+id/disconnectBT"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Disconnect" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/tcpMessagesTV"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="10" />
+        android:layout_weight="32.14" />
 
     <LinearLayout
 

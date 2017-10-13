@@ -16,7 +16,7 @@ import java.net.Socket;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_CONNECT;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_GROUP_OWNER_PORT;
 import static com.example.dmitro.chatapp.ChatApp.PARAM_PINTENT;
-import static com.example.dmitro.chatapp.ChatApp.STATUS_SERVER_STARTED_FEILURE;
+import static com.example.dmitro.chatapp.ChatApp.STATUS_SERVER_STARTED_FAILURE;
 import static com.example.dmitro.chatapp.ChatApp.STATUS_SERVER_STARTED_SUCCESS;
 import static com.example.dmitro.chatapp.screen.chat.wifi_direct.ChatActivity.EXTRAS_MESSAGE;
 
@@ -60,7 +60,7 @@ public class ServerService extends Service {
                 }
             } catch (IOException e) {
                 try {
-                    pendingIntent.send(this, STATUS_SERVER_STARTED_FEILURE, null);
+                    pendingIntent.send(this, STATUS_SERVER_STARTED_FAILURE, null);
                 } catch (PendingIntent.CanceledException e1) {
                     e1.printStackTrace();
                 }

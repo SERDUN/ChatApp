@@ -7,7 +7,12 @@ import java.io.Serializable;
  */
 
 public class Request implements Serializable {
+
     public Request() {
+    }
+
+    public Request(Action action) {
+        this.action = action;
     }
 
     public Request(User author, String message, long time) {
@@ -19,6 +24,15 @@ public class Request implements Serializable {
     private User author;
     private String message;
     private long time;
+    private Action action;
+
+    public Action getAction() {
+        return action;
+    }
+
+    public void setAction(Action action) {
+        this.action = action;
+    }
 
     public User getAuthor() {
         return author;

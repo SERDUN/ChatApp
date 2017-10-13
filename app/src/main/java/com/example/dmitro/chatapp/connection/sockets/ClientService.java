@@ -22,9 +22,9 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_CONNECT;
+import static com.example.dmitro.chatapp.ChatApp.EXTRAS_DISCONNECT;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_GROUP_OWNER_ADDRESS;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_GROUP_OWNER_PORT;
-import static com.example.dmitro.chatapp.screen.chat.wifi_direct.ChatActivity.EXTRAS_DISCONNECT;
 import static com.example.dmitro.chatapp.screen.chat.wifi_direct.ChatActivity.EXTRAS_MESSAGE;
 
 public class ClientService extends Service {
@@ -38,24 +38,24 @@ public class ClientService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent.getBooleanExtra(EXTRAS_DISCONNECT, false)) {
-            try {
-                objectInputStream.close();
-                objectOutputStream.flush();
-                objectOutputStream.close();
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-        if (intent.getBooleanExtra(EXTRAS_CONNECT, false)) {
+            disconnect();
+        } else if (intent.getBooleanExtra(EXTRAS_CONNECT, false)) {
             sendMessage(intent);
         } else {
             createConnection(intent);
         }
         return super.onStartCommand(intent, flags, startId);
-//// TODO: 10.10.17 close socket
+    }
+
+    private void disconnect() {
+        try {
+            objectInputStream.close();
+            objectOutputStream.flush();
+            objectOutputStream.close();
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -73,7 +73,6 @@ public class ClientService extends Service {
     }
 
     private void createConnection(Intent intent) {
-        Log.d("dddddd", "createConnection: client thread started");
         new Thread(() -> {
             socket = new Socket();
             int port = intent.getExtras().getInt(EXTRAS_GROUP_OWNER_PORT);

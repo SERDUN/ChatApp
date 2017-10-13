@@ -21,10 +21,15 @@ public class TCPChatContract {
 
         void sendMessage(Request request);
 
+        void stopService();
+
+
     }
 
     public interface Presenter extends BasePresenter {
         public void getMessages();
+
+        void disconnect();
 
         public void sendMessage(String name);
 

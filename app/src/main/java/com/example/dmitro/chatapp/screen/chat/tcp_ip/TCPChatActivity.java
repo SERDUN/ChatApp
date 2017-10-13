@@ -34,6 +34,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_CONNECT;
+import static com.example.dmitro.chatapp.ChatApp.EXTRAS_DISCONNECT;
 import static com.example.dmitro.chatapp.screen.chat.wifi_direct.ChatActivity.EXTRAS_MESSAGE;
 
 public class TCPChatActivity extends AppCompatActivity implements TCPChatContract.View {
@@ -48,6 +49,10 @@ public class TCPChatActivity extends AppCompatActivity implements TCPChatContrac
 
     @BindView(R.id.tcpTextMessageEdit)
     public EditText messageEditText;
+
+
+    @BindView(R.id.disconnectBT)
+    Button disconnectBT;
 
     private MessagesRecyclerAdapter messagesRecyclerAdapter;
 
@@ -75,7 +80,11 @@ public class TCPChatActivity extends AppCompatActivity implements TCPChatContrac
 
         sendButton.setOnClickListener(view -> presenter.sendMessage(messageEditText.getText().toString()));
 
-
+        disconnectBT.setOnClickListener(view -> {
+            presenter.disconnect();
+            setResult(RESULT_OK, new Intent());
+            finish();
+        });
         ContentObserver ob = new ContentObserver(new Handler(Looper.getMainLooper())) {
             @Override
             public void onChange(boolean selfChangem, Uri uri) {
@@ -138,5 +147,11 @@ public class TCPChatActivity extends AppCompatActivity implements TCPChatContrac
         intentService.putExtra(EXTRAS_MESSAGE, request);
         startService(intentService);
         messageEditText.setText("");
+    }
+
+    @Override
+    public void stopService() {
+        intentService.putExtra(EXTRAS_DISCONNECT, true);
+        startService(intentService);
     }
 }

@@ -4,6 +4,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,14 +14,19 @@ import android.widget.Toast;
 
 import com.example.dmitro.chatapp.R;
 import com.example.dmitro.chatapp.connection.sockets.ServerService;
+import com.example.dmitro.chatapp.connection.sockets.SocketsManager;
+import com.example.dmitro.chatapp.data.model.wifiDirect.User;
 import com.example.dmitro.chatapp.screen.chat.tcp_ip.TCPChatActivity;
 import com.example.dmitro.chatapp.utils.MyUtils;
+import com.example.dmitro.chatapp.utils.Observer;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import static com.example.dmitro.chatapp.ChatApp.PARAM_PINTENT;
-import static com.example.dmitro.chatapp.ChatApp.STATUS_SERVER_STARTED_FEILURE;
+import static com.example.dmitro.chatapp.ChatApp.STATUS_SERVER_STARTED_FAILURE;
 import static com.example.dmitro.chatapp.ChatApp.STATUS_SERVER_STARTED_SUCCESS;
 
 /**
@@ -33,6 +39,8 @@ public class CreateServerFragment extends Fragment implements CreateServerContra
 
     private PendingIntent pendingIntent;
 
+    private ConnectedUsersRecyclerAdapter connectedUsersRecyclerAdapter;
+
     @BindView(R.id.startServerBT)
     Button startServerBT;
 
@@ -41,6 +49,7 @@ public class CreateServerFragment extends Fragment implements CreateServerContra
 
     @BindView(R.id.connectedPeersRV)
     RecyclerView recyclerView;
+
 
     public static CreateServerFragment getInstance() {
         return new CreateServerFragment();
@@ -60,18 +69,30 @@ public class CreateServerFragment extends Fragment implements CreateServerContra
         View view = inflater.inflate(R.layout.fragment_wifi_server, container, false);
         ButterKnife.bind(this, view);
         initView();
-        initPending();
+        initListener();
         return view;
     }
 
-    private void initPending() {
+    private void initListener() {
+
         pendingIntent = getActivity().createPendingResult(0, new Intent(), 0);
+        SocketsManager.getInstance(getContext().getContentResolver()).registerObserver(new Observer() {
+            @Override
+            public <ArrayList> void update(ArrayList t) {
+                getActivity().runOnUiThread(() -> {
+                    connectedUsersRecyclerAdapter.updateData((java.util.ArrayList<User>) t);
+                });
+            }
+        });
 
     }
 
     private void initView() {
         startServerBT.setOnClickListener(view -> presenter.startServer());
         dialoguePageButton.setOnClickListener(view -> presenter.startDialogue());
+        connectedUsersRecyclerAdapter = new ConnectedUsersRecyclerAdapter(new ArrayList<>(), null);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setAdapter(connectedUsersRecyclerAdapter);
     }
 
 
@@ -112,7 +133,7 @@ public class CreateServerFragment extends Fragment implements CreateServerContra
                 startServerBT.setEnabled(false);
                 startServerBT.setText("server created");
                 break;
-            case STATUS_SERVER_STARTED_FEILURE:
+            case STATUS_SERVER_STARTED_FAILURE:
                 dialoguePageButton.setEnabled(false);
                 Toast.makeText(getContext(), "SERVER FAILURE", Toast.LENGTH_SHORT).show();
                 break;

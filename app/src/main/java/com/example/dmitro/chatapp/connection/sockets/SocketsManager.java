@@ -1,7 +1,9 @@
 package com.example.dmitro.chatapp.connection.sockets;
 
 import android.content.ContentResolver;
+import android.util.Log;
 
+import com.example.dmitro.chatapp.data.model.wifiDirect.Action;
 import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
 import com.example.dmitro.chatapp.data.model.wifiDirect.Request;
 import com.example.dmitro.chatapp.data.model.wifiDirect.User;
@@ -14,8 +16,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import static com.example.dmitro.chatapp.ChatApp.LOG_COUNT_CONNECTED;
 
 /**
  * Created by dmitro on 09.10.17.
@@ -31,12 +36,15 @@ public class SocketsManager implements Observable {
     private ContentResolver contentResolver;
     private LinkedList<Observer> observables;
 
+    private ArrayList<User> users;
+
     private SocketsManager(ContentResolver contentResolver) {
         this.inputStreams = new LinkedList<>();
         this.outputStreams = new LinkedList<>();
         this.sockets = new LinkedList<>();
         this.contentResolver = contentResolver;
         this.observables = new LinkedList<>();
+        this.users = new ArrayList<>();
     }
 
 
@@ -84,11 +92,27 @@ public class SocketsManager implements Observable {
 
                 Request object = (Request) inputStream.readObject();
                 object.setMessage("Увійшо в чат");
+                user = new User(object.getAuthor().getLogin());
+                users.add(user);
+                notifyObserver(null);
                 notifyAllAboutMessage(socket, object);
 
                 while (true) {
                     object = (Request) inputStream.readObject();
-                    notifyAllAboutMessage(socket, object);
+
+                    if (object.getAction() == Action.DISCONNECT) {
+                        inputStream.close();
+                        outputStream.close();
+                        socket.close();
+                        inputStreams.remove(inputStream);
+                        outputStreams.remove(outputStream);
+                        sockets.remove(socket);
+                        users.remove(user);
+                    } else {
+                        notifyAllAboutMessage(socket, object);
+
+                    }
+
 
                 }
             } catch (IOException e) {
@@ -102,6 +126,7 @@ public class SocketsManager implements Observable {
     }
 
     public synchronized void notifyAllAboutMessage(Socket sender, Request request) {
+        Log.d(LOG_COUNT_CONNECTED, "count connected: " + sockets.size());
         contentResolver.insert(ContractClass.Messages.CONTENT_URI,
                 MyUtils.Converter.createContentValues(Message.getInstanceFromRequest(request)));
         try {
@@ -153,9 +178,9 @@ public class SocketsManager implements Observable {
     }
 
     @Override
-    public <T> void notifyObserver(T t) {
+    public <ArrayList> void notifyObserver(ArrayList t) {
         for (Observer observer : observables) {
-            observer.update(null);
+            observer.update(users);
         }
     }
 

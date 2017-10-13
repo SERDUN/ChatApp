@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
+import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -21,12 +22,15 @@ import com.example.dmitro.chatapp.screen.setting.wifi_direct.other.WiFiDirectBro
 import com.example.dmitro.chatapp.screen.setting.wifi_direct.searchServer.ConnectionToServerFragment;
 import com.example.dmitro.chatapp.screen.setting.wifi_direct.searchServer.ConnectionToServerPresenter;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class PeersWifiDirectActivity extends AppCompatActivity implements PeersWifiDirectContract.View {
+import static com.example.dmitro.chatapp.ChatApp.REQUEST_CODE_FOR_CHAT;
+
+public class PeersWifiDirectActivity extends AppCompatActivity implements PeersWifiDirectContract.View,WifiP2pManager.ChannelListener {
 
 
     public static final String TAG = "WifiDirectActivity_log";
@@ -63,7 +67,12 @@ public class PeersWifiDirectActivity extends AppCompatActivity implements PeersW
 
     private void initWifiManager() {
         manager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
-        channel = manager.initialize(this, getMainLooper(), null);
+        channel = manager.initialize(this, getMainLooper(), new WifiP2pManager.ChannelListener() {
+            @Override
+            public void onChannelDisconnected() {
+                Log.d(TAG, "onChannelDisconnected: ");
+            }
+        });
     }
 
     private void init() {
@@ -92,46 +101,6 @@ public class PeersWifiDirectActivity extends AppCompatActivity implements PeersW
     private void initListener() {
 
         manager.discoverPeers(channel, connectionToServerFragment);
-//        manager.discoverPeers(channel, new WifiP2pManager.ActionListener() {
-//            @Override
-//            public void onSuccess() {
-//                Toast.makeText(PeersWifiDirectActivity.this, "Success discover pears", Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onFailure(int reason) {
-//
-//
-//            }
-//        });
-//        WifiP2pManager.PeerListListener peerListListener = wifiP2pDeviceList -> {
-//            ArrayList<WifiP2pDevice> list = new ArrayList(wifiP2pDeviceList.getDeviceList());
-//
-//
-//        };
-
-//        WifiP2pManager.ConnectionInfoListener connectionInfoListener = info -> {
-//
-//            if (info.groupFormed && info.isGroupOwner) {
-////                Intent intent = new Intent(this, ServerService.class);
-////                startService(intent);
-////                MyUtils.WIFIDirect.setServerType();
-////                Intent chatIntent = new Intent(this, TCPChatActivity.class);
-////                startActivity(chatIntent);
-//
-//            } else if (info.groupFormed) {
-////                Intent intent = new Intent(this, ClientService.class);
-////                intent.putExtra(EXTRAS_GROUP_OWNER_ADDRESS,
-////                        info.groupOwnerAddress.getHostAddress());
-////                intent.putExtra(EXTRAS_GROUP_OWNER_PORT, Integer.valueOf(getString(R.string.default_port)));
-////                startService(intent);
-////
-////                Intent chatIntent = new Intent(this, TCPChatActivity.class);
-////                startActivity(chatIntent);
-//            }
-//        };
-
-
         receiver = new WiFiDirectBroadcastReceiver(manager, channel, this, connectionToServerFragment, connectionToServerFragment);
         registerReceiver(receiver, intentFilter);
     }
@@ -173,30 +142,83 @@ public class PeersWifiDirectActivity extends AppCompatActivity implements PeersW
     }
 
 
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy: DESTROY");
-        manager.removeGroup(channel, new WifiP2pManager.ActionListener() {
-            @Override
-            public void onSuccess() {
-
-            }
-
-            @Override
-            public void onFailure(int i) {
-
-            }
-        });
 
 
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        createServerFragment.onActivityResult(requestCode, resultCode, data);
-        connectionToServerFragment.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_FOR_CHAT) {
+            closeConnection();
+        } else {
+            createServerFragment.onActivityResult(requestCode, resultCode, data);
+            connectionToServerFragment.onActivityResult(requestCode, resultCode, data);
+        }
 
+
+    }
+
+
+    public void closeConnection() {
+//        manager.removeGroup(channel,null);
+//
+//        manager.removeGroup(channel, new WifiP2pManager.ActionListener() {
+//            @Override
+//            public void onSuccess() {
+//
+////                channel = manager.initialize(getBaseContext(), getMainLooper(), null);
+////                manager.discoverPeers(channel, connectionToServerFragment);
+//
+//            }
+//            @Override
+//            public void onFailure(int reason) {
+//            }
+//        });
+
+
+
+        try {
+            Method[] methods = WifiP2pManager.class.getMethods();
+            for (int i = 0; i < methods.length; i++) {
+                if (methods[i].getName().equals("deletePersistentGroup")) {
+                    // Delete any persistent group
+                    for (int netid = 0; netid < 32; netid++) {
+                        methods[i].invoke(manager, channel, netid, null);
+                    }
+                }
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+
+
+//        manager.removeGroup(channel, new WifiP2pManager.ActionListener() {
+//            @Override
+//            public void onSuccess() {
+//
+//            }
+//
+//            @Override
+//            public void onFailure(int i) {
+//
+//            }
+//        });
+    }
+
+    @Override
+    public void onChannelDisconnected() {
+        if (manager != null ) {
+            Toast.makeText(this, "Channel lost. Trying again", Toast.LENGTH_LONG).show();
+            manager.initialize(this, getMainLooper(), this);
+        }
+        else {
+            Toast.makeText(this,
+                    "Severe! Channel is probably lost premanently. Try Disable/Re-Enable P2P.",
+                    Toast.LENGTH_LONG).show();
+        }
     }
 }

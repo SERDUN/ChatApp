@@ -31,6 +31,7 @@ import butterknife.ButterKnife;
 
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_GROUP_OWNER_ADDRESS;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_GROUP_OWNER_PORT;
+import static com.example.dmitro.chatapp.ChatApp.REQUEST_CODE_FOR_CHAT;
 
 /**
  * Created by dmitro on 10.10.17.
@@ -81,13 +82,6 @@ public class ConnectionToServerFragment extends Fragment implements ConnectionTo
 
     }
 
-//    private Intent createIntentForService() {
-//        Intent intent = new Intent(getContext(), ClientService.class);
-//        intent.putExtra(EXTRAS_GROUP_OWNER_ADDRESS, ipConnectingServer.getText().toString());
-//        intent.putExtra(EXTRAS_GROUP_OWNER_PORT, Integer.valueOf(portServerET.getText().toString()));
-//        return intent;
-//    }
-
 
     @Override
     public void initPresenter(ConnectionToServerContract.Presenter presenter) {
@@ -107,16 +101,18 @@ public class ConnectionToServerFragment extends Fragment implements ConnectionTo
     @Override
     public void onPeersAvailable(WifiP2pDeviceList wifiP2pDeviceList) {
         ArrayList<WifiP2pDevice> list = new ArrayList(wifiP2pDeviceList.getDeviceList());
+
         peerRecyclerAdapter.updateData(list);
 
-        Toast.makeText(getContext(), "new peers", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getContext(), "new peers", Toast.LENGTH_SHORT).show();
 
 
     }
 
     @Override
     public void onConnectionInfoAvailable(WifiP2pInfo info) {
-        Toast.makeText(getContext(), "connection", Toast.LENGTH_SHORT).show();
+
+
         if (info.groupFormed && info.isGroupOwner) {
 ////                Intent intent = new Intent(this, ServerService.class);
 ////                startService(intent);
@@ -129,8 +125,7 @@ public class ConnectionToServerFragment extends Fragment implements ConnectionTo
 
             hostAddress.add(info.groupOwnerAddress.getHostAddress());
 
-            if (hostAddress.contains(info.groupOwnerAddress.getHostAddress())) {
-                Log.d("dddddd", "create service: ");
+    //        if (hostAddress.contains(info.groupOwnerAddress.getHostAddress())) {
                 Intent intent = new Intent(getContext(), ClientService.class);
                 intent.putExtra(EXTRAS_GROUP_OWNER_ADDRESS,
                         info.groupOwnerAddress.getHostAddress());
@@ -138,20 +133,20 @@ public class ConnectionToServerFragment extends Fragment implements ConnectionTo
                 getContext().startService(intent);
 
                 Intent chatIntent = new Intent(getContext(), TCPChatActivity.class);
-                startActivity(chatIntent);
+                getActivity().startActivityForResult(chatIntent, REQUEST_CODE_FOR_CHAT);
             }
         }
-    }
+ //   }
 
     @Override
     public void onSuccess() {
-        Toast.makeText(getContext(), "WIFI DIRECT ENABLED", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getContext(), "WIFI DIRECT ENABLED", Toast.LENGTH_SHORT).show();
 
     }
 
     @Override
     public void onFailure(int i) {
-        Toast.makeText(getContext(), "WIFI DIRECT DISABLED", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getContext(), "WIFI DIRECT DISABLED", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -168,7 +163,7 @@ public class ConnectionToServerFragment extends Fragment implements ConnectionTo
 
             @Override
             public void onFailure(int reason) {
-                Toast.makeText(getContext(), "FAilure connected", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), "FAilure connected", Toast.LENGTH_SHORT).show();
             }
         });
     }
