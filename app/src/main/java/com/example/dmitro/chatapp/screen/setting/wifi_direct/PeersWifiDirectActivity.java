@@ -3,9 +3,7 @@ package com.example.dmitro.chatapp.screen.setting.wifi_direct;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
-import android.net.wifi.p2p.WifiP2pGroup;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -22,7 +20,6 @@ import com.example.dmitro.chatapp.screen.setting.wifi_direct.other.WiFiDirectBro
 import com.example.dmitro.chatapp.screen.setting.wifi_direct.searchServer.ConnectionToServerFragment;
 import com.example.dmitro.chatapp.screen.setting.wifi_direct.searchServer.ConnectionToServerPresenter;
 
-import java.lang.reflect.Method;
 import java.util.Collection;
 
 import butterknife.BindView;
@@ -155,7 +152,7 @@ public class PeersWifiDirectActivity extends AppCompatActivity implements PeersW
             closeConnection();
         } else {
             createServerFragment.onActivityResult(requestCode, resultCode, data);
-            connectionToServerFragment.onActivityResult(requestCode, resultCode, data);
+        //    connectionToServerFragment.onActivityResult(requestCode, resultCode, data);
         }
 
 
@@ -163,7 +160,12 @@ public class PeersWifiDirectActivity extends AppCompatActivity implements PeersW
 
 
     public void closeConnection() {
-//        manager.removeGroup(channel,null);
+
+        manager.removeGroup(channel,null);
+        manager.initialize(this, getMainLooper(), this);
+
+
+
 //
 //        manager.removeGroup(channel, new WifiP2pManager.ActionListener() {
 //            @Override
@@ -180,19 +182,19 @@ public class PeersWifiDirectActivity extends AppCompatActivity implements PeersW
 
 
 
-        try {
-            Method[] methods = WifiP2pManager.class.getMethods();
-            for (int i = 0; i < methods.length; i++) {
-                if (methods[i].getName().equals("deletePersistentGroup")) {
-                    // Delete any persistent group
-                    for (int netid = 0; netid < 32; netid++) {
-                        methods[i].invoke(manager, channel, netid, null);
-                    }
-                }
-            }
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            Method[] methods = WifiP2pManager.class.getMethods();
+//            for (int i = 0; i < methods.length; i++) {
+//                if (methods[i].getName().equals("deletePersistentGroup")) {
+//                    // Delete any persistent group
+//                    for (int netid = 0; netid < 32; netid++) {
+//                        methods[i].invoke(manager, channel, netid, null);
+//                    }
+//                }
+//            }
+//        } catch(Exception e) {
+//            e.printStackTrace();
+//        }
 
 
 
@@ -220,5 +222,8 @@ public class PeersWifiDirectActivity extends AppCompatActivity implements PeersW
                     "Severe! Channel is probably lost premanently. Try Disable/Re-Enable P2P.",
                     Toast.LENGTH_LONG).show();
         }
+
+        registerReceiver(receiver, intentFilter);
+
     }
 }

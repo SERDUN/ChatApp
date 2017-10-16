@@ -3,8 +3,6 @@ package com.example.dmitro.chatapp.data.provider;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
-
 /**
  * Created by dmitro on 12.10.17.
  */

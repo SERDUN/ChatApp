@@ -23,9 +23,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".screen.setting.firebase.ChannelFirebaseActivity" />
         <activity android:name=".test.MainActivity" />
-        <activity android:name=".screen.chat.wifi_direct.ChatActivity" />
         <activity android:name=".screen.setting.wifi_direct.PeersWifiDirectActivity" />
 
         <service
@@ -41,7 +39,9 @@
             android:exported="false" />
 
         <activity android:name=".screen.setting.tcp_ip.TCPIPSettingActivity" />
-        <activity android:name=".screen.chat.tcp_ip.TCPChatActivity"></activity>
+        <activity android:name=".screen.chat.tcp_ip.TCPChatActivity" />
+        <activity android:name=".screen.chat.host.HostChatActivity" />
+        <activity android:name=".screen.chat.client.ClientChatActivity"></activity>
     </application>
 
 </manifest>

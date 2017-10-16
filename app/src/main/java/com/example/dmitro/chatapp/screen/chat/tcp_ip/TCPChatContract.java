@@ -3,7 +3,7 @@ package com.example.dmitro.chatapp.screen.chat.tcp_ip;
 import com.example.dmitro.chatapp.BasePresenter;
 import com.example.dmitro.chatapp.BaseView;
 import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
-import com.example.dmitro.chatapp.data.model.wifiDirect.Request;
+import com.example.dmitro.chatapp.data.model.wifiDirect.request.Request;
 
 import java.util.List;
 

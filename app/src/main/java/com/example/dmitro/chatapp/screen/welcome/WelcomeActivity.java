@@ -1,14 +1,9 @@
 package com.example.dmitro.chatapp.screen.welcome;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.database.ContentObserver;
-import android.os.Handler;
-import android.os.Looper;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,10 +13,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.dmitro.chatapp.R;
-import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
-import com.example.dmitro.chatapp.data.model.wifiDirect.User;
-import com.example.dmitro.chatapp.data.provider.ContractClass;
-import com.example.dmitro.chatapp.screen.setting.firebase.ChannelFirebaseActivity;
 import com.example.dmitro.chatapp.screen.setting.tcp_ip.TCPIPSettingActivity;
 import com.example.dmitro.chatapp.screen.setting.wifi_direct.PeersWifiDirectActivity;
 
@@ -114,8 +105,6 @@ public class WelcomeActivity extends AppCompatActivity implements WelcomeContrac
 
     @Override
     public void openFirebaseSetting() {
-        Intent intent = new Intent(this, ChannelFirebaseActivity.class);
-        startActivity(intent);
 
     }
 

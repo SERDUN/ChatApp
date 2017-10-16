@@ -5,8 +5,9 @@ import android.util.Log;
 
 import com.example.dmitro.chatapp.data.model.wifiDirect.Action;
 import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
-import com.example.dmitro.chatapp.data.model.wifiDirect.Request;
+import com.example.dmitro.chatapp.data.model.wifiDirect.request.Request;
 import com.example.dmitro.chatapp.data.model.wifiDirect.User;
+import com.example.dmitro.chatapp.data.model.wifiDirect.request.RequestMessage;
 import com.example.dmitro.chatapp.data.provider.ContractClass;
 import com.example.dmitro.chatapp.utils.MyUtils;
 import com.example.dmitro.chatapp.utils.Observable;
@@ -18,7 +19,6 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 import static com.example.dmitro.chatapp.ChatApp.LOG_COUNT_CONNECTED;
 
@@ -88,14 +88,12 @@ public class SocketsManager implements Observable {
         @Override
         public void run() {
             try {
-
-
-                Request object = (Request) inputStream.readObject();
-                object.setMessage("Увійшо в чат");
-                user = new User(object.getAuthor().getLogin());
-                users.add(user);
-                notifyObserver(null);
-                notifyAllAboutMessage(socket, object);
+                Request object;// = (RequestMessage) inputStream.readObject();
+//                object.setMessage("Увійшо в чат");
+//                user = new User(object.getAuthor().getLogin());
+//                users.add(user);
+//                notifyObserver(null);
+//                notifyAllAboutMessage(socket, object);
 
                 while (true) {
                     object = (Request) inputStream.readObject();
@@ -108,10 +106,19 @@ public class SocketsManager implements Observable {
                         outputStreams.remove(outputStream);
                         sockets.remove(socket);
                         users.remove(user);
-                    } else {
+                    }
+                    if (object instanceof RequestMessage) {
                         notifyAllAboutMessage(socket, object);
 
                     }
+
+
+//                    else if (object.getAction() == Action.GET_ALL_MESSAGE) {
+//
+//                    } else {
+//                        notifyAllAboutMessage(socket, object);
+//
+//                    }
 
 
                 }
@@ -128,7 +135,7 @@ public class SocketsManager implements Observable {
     public synchronized void notifyAllAboutMessage(Socket sender, Request request) {
         Log.d(LOG_COUNT_CONNECTED, "count connected: " + sockets.size());
         contentResolver.insert(ContractClass.Messages.CONTENT_URI,
-                MyUtils.Converter.createContentValues(Message.getInstanceFromRequest(request)));
+                MyUtils.Converter.createContentValues(request.);
         try {
             for (ObjectOutputStream out : outputStreams) {
                 out.writeObject(request);

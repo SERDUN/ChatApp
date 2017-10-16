@@ -1,11 +1,8 @@
 package com.example.dmitro.chatapp.screen.chat.tcp_ip;
 
-import android.util.Log;
-
 import com.example.dmitro.chatapp.data.model.wifiDirect.Action;
-import com.example.dmitro.chatapp.data.model.wifiDirect.Request;
+import com.example.dmitro.chatapp.data.model.wifiDirect.request.Request;
 import com.example.dmitro.chatapp.data.repository.managers.WifiDirectChatRepositoryManager;
-import com.example.dmitro.chatapp.screen.chat.wifi_direct.ChatContract;
 import com.example.dmitro.chatapp.utils.MyUtils;
 
 /**

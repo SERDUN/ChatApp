@@ -1,7 +1,5 @@
 package com.example.dmitro.chatapp.data.model.firebase;
 
-import java.util.List;
-
 /**
  * Created by dmitro on 08.10.17.
  */

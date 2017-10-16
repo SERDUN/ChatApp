@@ -6,5 +6,6 @@ package com.example.dmitro.chatapp.data.model.wifiDirect;
 
 public enum Action {
     CONNECT,
-    DISCONNECT
+    DISCONNECT,
+    GET_ALL_MESSAGE
 }

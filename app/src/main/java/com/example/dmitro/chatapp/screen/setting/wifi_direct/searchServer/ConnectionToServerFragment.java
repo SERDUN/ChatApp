@@ -1,5 +1,6 @@
 package com.example.dmitro.chatapp.screen.setting.wifi_direct.searchServer;
 
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
@@ -18,9 +19,12 @@ import android.widget.Toast;
 
 import com.example.dmitro.chatapp.R;
 import com.example.dmitro.chatapp.connection.sockets.ClientService;
+import com.example.dmitro.chatapp.connection.sockets.ServerService;
+import com.example.dmitro.chatapp.screen.chat.client.ClientChatActivity;
 import com.example.dmitro.chatapp.screen.chat.tcp_ip.TCPChatActivity;
 import com.example.dmitro.chatapp.screen.setting.wifi_direct.PeersWifiDirectActivity;
 import com.example.dmitro.chatapp.screen.setting.wifi_direct.other.PeerRecyclerAdapter;
+import com.example.dmitro.chatapp.utils.MyUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -31,6 +35,7 @@ import butterknife.ButterKnife;
 
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_GROUP_OWNER_ADDRESS;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_GROUP_OWNER_PORT;
+import static com.example.dmitro.chatapp.ChatApp.PARAM_PINTENT;
 import static com.example.dmitro.chatapp.ChatApp.REQUEST_CODE_FOR_CHAT;
 
 /**
@@ -49,6 +54,9 @@ public class ConnectionToServerFragment extends Fragment implements ConnectionTo
 
 
     private HashSet<String> hostAddress;
+
+
+    private PendingIntent pendingIntent;
 
     public static ConnectionToServerFragment getInstance() {
         return new ConnectionToServerFragment();
@@ -73,6 +81,8 @@ public class ConnectionToServerFragment extends Fragment implements ConnectionTo
     }
 
     private void init() {
+        pendingIntent = getActivity().createPendingResult(0, new Intent(), 0);
+
         peerRecyclerAdapter = new PeerRecyclerAdapter(new ArrayList<>(), this::connectToDevice);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -112,31 +122,34 @@ public class ConnectionToServerFragment extends Fragment implements ConnectionTo
     @Override
     public void onConnectionInfoAvailable(WifiP2pInfo info) {
 
-
         if (info.groupFormed && info.isGroupOwner) {
-////                Intent intent = new Intent(this, ServerService.class);
-////                startService(intent);
-////                MyUtils.WIFIDirect.setServerType();
-////                Intent chatIntent = new Intent(this, TCPChatActivity.class);
-////                startActivity(chatIntent);
-//
-//
+            Toast.makeText(getContext(), "SERVER", Toast.LENGTH_SHORT).show();
+                  getContext().startService(createIntentForService());
+
+
         } else if (info.groupFormed) {
+            Toast.makeText(getContext(), "Client", Toast.LENGTH_SHORT).show();
 
-            hostAddress.add(info.groupOwnerAddress.getHostAddress());
+//            hostAddress.add(info.groupOwnerAddress.getHostAddress());
+//
+////            if (hostAddress.contains(info.groupOwnerAddress.getHostAddress())) {
+            Intent intent = new Intent(getContext(), ClientService.class);
+            intent.putExtra(EXTRAS_GROUP_OWNER_ADDRESS,
+                    info.groupOwnerAddress.getHostAddress());
+            intent.putExtra(EXTRAS_GROUP_OWNER_PORT, Integer.valueOf(getString(R.string.default_port)));
+            getContext().startService(intent);
 
-    //        if (hostAddress.contains(info.groupOwnerAddress.getHostAddress())) {
-                Intent intent = new Intent(getContext(), ClientService.class);
-                intent.putExtra(EXTRAS_GROUP_OWNER_ADDRESS,
-                        info.groupOwnerAddress.getHostAddress());
-                intent.putExtra(EXTRAS_GROUP_OWNER_PORT, Integer.valueOf(getString(R.string.default_port)));
-                getContext().startService(intent);
-
-                Intent chatIntent = new Intent(getContext(), TCPChatActivity.class);
-                getActivity().startActivityForResult(chatIntent, REQUEST_CODE_FOR_CHAT);
-            }
+            Intent chatIntent = new Intent(getContext(), ClientChatActivity.class);
+            getActivity().startActivityForResult(chatIntent, REQUEST_CODE_FOR_CHAT);
         }
- //   }
+        //}
+    }
+
+    private Intent createIntentForService() {
+        Intent intent = new Intent(getContext(), ServerService.class).putExtra(PARAM_PINTENT, pendingIntent);
+        return intent;
+    }
+
 
     @Override
     public void onSuccess() {
@@ -152,6 +165,7 @@ public class ConnectionToServerFragment extends Fragment implements ConnectionTo
 
     private void connectToDevice(WifiP2pDevice device) {
         WifiP2pConfig config = new WifiP2pConfig();
+        config.groupOwnerIntent = 0;
         config.deviceAddress = device.deviceAddress;
         ((PeersWifiDirectActivity) getActivity()).manager.connect(((PeersWifiDirectActivity) getActivity()).channel, config, new WifiP2pManager.ActionListener() {
 
@@ -167,5 +181,6 @@ public class ConnectionToServerFragment extends Fragment implements ConnectionTo
             }
         });
     }
+
 
 }

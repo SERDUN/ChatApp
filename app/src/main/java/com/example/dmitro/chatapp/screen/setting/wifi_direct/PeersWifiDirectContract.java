@@ -4,7 +4,6 @@ import android.net.wifi.p2p.WifiP2pDevice;
 
 import com.example.dmitro.chatapp.BasePresenter;
 import com.example.dmitro.chatapp.BaseView;
-import com.example.dmitro.chatapp.screen.welcome.WelcomeContract;
 
 import java.util.Collection;
 

@@ -1,6 +1,5 @@
 package com.example.dmitro.chatapp.screen.setting.wifi_direct.create_server;
 
-import android.net.wifi.p2p.WifiP2pDevice;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;

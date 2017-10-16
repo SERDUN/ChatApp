@@ -1,14 +1,14 @@
 package com.example.dmitro.chatapp.screen.setting.tcp_ip;
 
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 
 import com.example.dmitro.chatapp.R;
-import com.example.dmitro.chatapp.screen.setting.tcp_ip.search_server.ConnectionToServerFragment;
-import com.example.dmitro.chatapp.screen.setting.tcp_ip.create_server.CreateServerPresenter;
 import com.example.dmitro.chatapp.screen.setting.tcp_ip.create_server.CreateServerFragment;
+import com.example.dmitro.chatapp.screen.setting.tcp_ip.create_server.CreateServerPresenter;
+import com.example.dmitro.chatapp.screen.setting.tcp_ip.search_server.ConnectionToServerFragment;
 import com.example.dmitro.chatapp.screen.setting.tcp_ip.search_server.ConnectionToServerPresenter;
 
 import butterknife.BindView;

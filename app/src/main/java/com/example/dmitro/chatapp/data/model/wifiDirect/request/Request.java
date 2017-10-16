@@ -1,30 +1,26 @@
-package com.example.dmitro.chatapp.data.model.wifiDirect;
+package com.example.dmitro.chatapp.data.model.wifiDirect.request;
+
+import com.example.dmitro.chatapp.data.model.wifiDirect.Action;
+import com.example.dmitro.chatapp.data.model.wifiDirect.User;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by dmitro on 09.10.17.
  */
 
 public class Request implements Serializable {
+    protected User author;
+    protected long time;
+    protected Action action;
 
-    public Request() {
-    }
-
-    public Request(Action action) {
+    public Request(User author, long time, Action action) {
+        this.author = author;
+        this.time = time;
         this.action = action;
     }
-
-    public Request(User author, String message, long time) {
-        this.author = author;
-        this.message = message;
-        this.time = time;
-    }
-
-    private User author;
-    private String message;
-    private long time;
-    private Action action;
 
     public Action getAction() {
         return action;
@@ -42,13 +38,6 @@ public class Request implements Serializable {
         this.author = author;
     }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
 
     public long getTime() {
         return time;
@@ -62,7 +51,6 @@ public class Request implements Serializable {
     public String toString() {
         return "Request{" +
                 "author=" + author +
-                ", message='" + message + '\'' +
                 ", time=" + time +
                 '}';
     }

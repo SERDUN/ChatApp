@@ -11,7 +11,7 @@ import android.util.Log;
 
 import com.example.dmitro.chatapp.R;
 import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
-import com.example.dmitro.chatapp.data.model.wifiDirect.Request;
+import com.example.dmitro.chatapp.data.model.wifiDirect.request.Request;
 import com.example.dmitro.chatapp.data.provider.ContractClass;
 import com.example.dmitro.chatapp.utils.MyUtils;
 
@@ -25,7 +25,7 @@ import static com.example.dmitro.chatapp.ChatApp.EXTRAS_CONNECT;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_DISCONNECT;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_GROUP_OWNER_ADDRESS;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_GROUP_OWNER_PORT;
-import static com.example.dmitro.chatapp.screen.chat.wifi_direct.ChatActivity.EXTRAS_MESSAGE;
+import static com.example.dmitro.chatapp.ChatApp.EXTRAS_MESSAGE;
 
 public class ClientService extends Service {
 

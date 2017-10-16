@@ -1,4 +1,4 @@
-package com.example.dmitro.chatapp.screen.chat.wifi_direct;
+package com.example.dmitro.chatapp.screen.chat.tcp_ip;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,9 +13,8 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
 /**
- * Created by dmitro on 08.10.17.
+ * Created by dmitro on 15.10.17.
  */
 
 public class MessagesRecyclerAdapter extends RecyclerView.Adapter<MessagesRecyclerAdapter.ChannelHolder> {

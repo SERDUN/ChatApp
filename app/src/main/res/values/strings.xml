@@ -17,6 +17,7 @@
     <string name="no">No</string>
     <string name="enable_connection_in_chat_session">Enable connection in chat session</string>
     <string name="go_to_the_dialogue_page">dialogue page</string>
+    <string name="you_will_become_server_after_first_connection_client_to_your_device">you will become a server after the first connection of the client to your device</string>
 
 
 </resources>

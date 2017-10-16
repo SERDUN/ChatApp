@@ -1,8 +1,9 @@
 package com.example.dmitro.chatapp.data.model.wifiDirect;
 
+import com.example.dmitro.chatapp.data.model.wifiDirect.request.Request;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
-import io.realm.annotations.Required;
 
 /**
  * Created by dmitro on 11.10.17.

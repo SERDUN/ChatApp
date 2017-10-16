@@ -1,9 +1,6 @@
 package com.example.dmitro.chatapp;
 
-import android.app.Activity;
 import android.app.Application;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -19,6 +16,12 @@ public class ChatApp extends Application {
     public static final String EXTRAS_GROUP_OWNER_ADDRESS = "go_host";
     public static final String EXTRAS_CONNECT = "go_connect";
     public static final String EXTRAS_DISCONNECT = "go_disconnect";
+    public static String EXTRAS_MESSAGE = "message";
+
+    public final static String BROADCAST_CONNECT_ACTION = "com.example.dmitro.chatapp.BROADCAST_CONNECT_ACTION";
+
+
+
 
 
 

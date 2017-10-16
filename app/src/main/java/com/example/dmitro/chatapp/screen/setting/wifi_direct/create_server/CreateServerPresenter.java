@@ -1,13 +1,5 @@
 package com.example.dmitro.chatapp.screen.setting.wifi_direct.create_server;
 
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
-import android.text.format.Formatter;
-
-import com.example.dmitro.chatapp.ChatApp;
-
-import static android.content.Context.WIFI_SERVICE;
-
 /**
  * Created by dmitro on 11.10.17.
  */

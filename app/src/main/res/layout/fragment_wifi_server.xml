@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.dmitro.chatapp.screen.chat.wifi_direct.ChatActivity">
+    >
 
 
     <LinearLayout
@@ -66,13 +65,15 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="bottom|center"
-        android:orientation="horizontal">
+        android:orientation="vertical">
+
         <Button
             android:id="@+id/startServerBT"
-            android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:text="@string/start_server" />
+            android:enabled="false"
+            android:layout_weight="1"
+            android:text="@string/you_will_become_server_after_first_connection_client_to_your_device" />
 
         <Button
             android:enabled="false"

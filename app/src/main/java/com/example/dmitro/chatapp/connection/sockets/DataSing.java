@@ -1,6 +1,6 @@
 package com.example.dmitro.chatapp.connection.sockets;
 
-import com.example.dmitro.chatapp.data.model.wifiDirect.Request;
+import com.example.dmitro.chatapp.data.model.wifiDirect.request.Request;
 
 import java.util.ArrayList;
 import java.util.List;
