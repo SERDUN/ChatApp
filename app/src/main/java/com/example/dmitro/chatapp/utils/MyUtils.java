@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.example.dmitro.chatapp.ChatApp;
@@ -12,6 +14,9 @@ import com.example.dmitro.chatapp.connection.TypeConnection;
 import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
 import com.example.dmitro.chatapp.data.model.wifiDirect.User;
 import com.example.dmitro.chatapp.data.provider.ContractClass;
+
+import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
 
 /**
  * Created by dmitro on 08.10.17.
@@ -75,6 +80,7 @@ public class MyUtils {
             value.put(ContractClass.Messages.COLUMN_NAME_LOGIN, message.getAuthor());
             value.put(ContractClass.Messages.COLUMN_NAME_TIME, message.getTime());
             value.put(ContractClass.Messages.COLUMN_NAME_MESSAGE, message.getMessage());
+            value.put(ContractClass.Messages.COLUMN_NAME_FILE_URI, message.getUri());
             return value;
         }
 
@@ -84,12 +90,18 @@ public class MyUtils {
             if (record.getCount() != 0) {
                 if (record.moveToFirst()) {
                     do {
-                        Log.d("dddddddddddddd", "update: " + record.getString(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_MESSAGE)));
 
+                        String file = record.getString(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_FILE_URI));
                         String login = record.getString(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_LOGIN));
                         String message = record.getString(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_MESSAGE));
                         long time = record.getLong(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_TIME));
                         messageObj = new Message(login, message, time);
+                        if (file != null) {
+                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                            StorageUtils.loadImageFromStorage(file).compress(Bitmap.CompressFormat.PNG, 100, stream);
+                            byte[] byteArray = stream.toByteArray();
+                            messageObj.setFile(byteArray);
+                        }
                     } while (record.moveToNext());
                 }
             }
@@ -97,6 +109,34 @@ public class MyUtils {
 
             return messageObj;
         }
+
+
+        public static ArrayList<Message> createMessageFromCursor(Cursor record) {
+            ArrayList<Message> messages = new ArrayList<>();
+            if (record.getCount() != 0) {
+                if (record.moveToFirst()) {
+                    do {
+                        String file = record.getString(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_FILE_URI));
+                        String login = record.getString(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_LOGIN));
+                        String message = record.getString(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_MESSAGE));
+                        long time = record.getLong(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_TIME));
+                        Message message1 = new Message(login, message, time);
+                        if (file != null){
+                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                            StorageUtils.loadImageFromStorage(file).compress(Bitmap.CompressFormat.PNG, 100, stream);
+                            byte[] byteArray = stream.toByteArray();
+                            message1.setFile(byteArray);
+                        }
+                        messages.add(message1);
+                    } while (record.moveToNext());
+                }
+            }
+            record.close();
+
+            return messages;
+        }
+
+
     }
 
 

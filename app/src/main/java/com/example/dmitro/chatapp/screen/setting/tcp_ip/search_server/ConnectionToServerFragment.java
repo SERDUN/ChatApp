@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.example.dmitro.chatapp.R;
 import com.example.dmitro.chatapp.connection.sockets.ClientService;
-import com.example.dmitro.chatapp.screen.chat.tcp_ip.TCPChatActivity;
+import com.example.dmitro.chatapp.screen.chat.client.ClientChatActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -63,7 +63,7 @@ public class ConnectionToServerFragment extends Fragment implements ConnectionTo
         portServerET.setText(getResources().getText(R.string.default_port));
         connectToServerButton.setOnClickListener(view -> {
             getContext().startService(createIntentForService());
-            startActivity(new Intent(getContext(), TCPChatActivity.class));
+            startActivity(new Intent(getContext(), ClientChatActivity.class));
         });
     }
 

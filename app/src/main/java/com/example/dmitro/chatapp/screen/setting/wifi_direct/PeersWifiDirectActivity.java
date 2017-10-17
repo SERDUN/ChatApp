@@ -149,7 +149,7 @@ public class PeersWifiDirectActivity extends AppCompatActivity implements PeersW
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_FOR_CHAT) {
-            closeConnection();
+            //closeConnection();
         } else {
             createServerFragment.onActivityResult(requestCode, resultCode, data);
         //    connectionToServerFragment.onActivityResult(requestCode, resultCode, data);

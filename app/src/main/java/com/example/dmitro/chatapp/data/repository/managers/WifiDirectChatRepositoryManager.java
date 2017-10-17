@@ -51,10 +51,10 @@ public class WifiDirectChatRepositoryManager implements ChatDataSource, Observab
 
     @Override
     public void getMessages(String key, Event1<List<Message>> messages, Event1<String> failure, Event0 complate) {
-        Realm realm = Realm.getDefaultInstance();
-        RealmResults<Message> results = realm.where(Message.class).findAll();
-        List<Message> arr = realm.copyFromRealm(results);
-        messages.call(arr);
+//        Realm realm = Realm.getDefaultInstance();
+//        RealmResults<Message> results = realm.where(Message.class).findAll();
+//        List<Message> arr = realm.copyFromRealm(results);
+//        messages.call(arr);
         int d = 4;
     }
 
@@ -71,10 +71,10 @@ public class WifiDirectChatRepositoryManager implements ChatDataSource, Observab
 
     @Override
     public void addMessageInDatabase(Message message, Event1<com.example.dmitro.chatapp.data.model.wifiDirect.Message> s, Event1<String> f, Event0 c) {
-        Realm.getDefaultInstance().executeTransaction(realm -> {
-            realm.copyToRealm(message);
-            notifyObserver(message);
-        });
+//        Realm.getDefaultInstance().executeTransaction(realm -> {
+//            realm.copyToRealm(message);
+//            notifyObserver(message);
+//        });
     }
 
 

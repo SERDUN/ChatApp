@@ -1,4 +1,4 @@
-package com.example.dmitro.chatapp.screen.chat.tcp_ip;
+package com.example.dmitro.chatapp.screen.chat;
 import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
 
 /**

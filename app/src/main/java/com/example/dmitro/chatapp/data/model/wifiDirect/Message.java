@@ -2,6 +2,8 @@ package com.example.dmitro.chatapp.data.model.wifiDirect;
 
 import com.example.dmitro.chatapp.data.model.wifiDirect.request.Request;
 
+import java.io.Serializable;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -9,9 +11,21 @@ import io.realm.annotations.PrimaryKey;
  * Created by dmitro on 11.10.17.
  */
 
-public class Message extends RealmObject {
+public class Message implements Serializable {
     private String author;
     private String message;
+    private byte[] file;
+    private String uri;
+
+
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
 
     @PrimaryKey
     private long time;
@@ -25,8 +39,12 @@ public class Message extends RealmObject {
         this.time = time;
     }
 
-    public static Message getInstanceFromRequest(Request request) {
-        return new Message(request.getAuthor().toString(), request.getMessage(), request.getTime());
+    public byte[] getFile() {
+        return file;
+    }
+
+    public void setFile(byte[] file) {
+        this.file = file;
     }
 
     public String getAuthor() {

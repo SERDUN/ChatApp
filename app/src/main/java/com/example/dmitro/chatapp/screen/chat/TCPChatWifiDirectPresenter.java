@@ -1,7 +1,6 @@
-package com.example.dmitro.chatapp.screen.chat.tcp_ip;
+package com.example.dmitro.chatapp.screen.chat;
 
-import com.example.dmitro.chatapp.data.model.wifiDirect.Action;
-import com.example.dmitro.chatapp.data.model.wifiDirect.request.Request;
+import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
 import com.example.dmitro.chatapp.data.repository.managers.WifiDirectChatRepositoryManager;
 import com.example.dmitro.chatapp.utils.MyUtils;
 
@@ -34,11 +33,11 @@ public class TCPChatWifiDirectPresenter implements TCPChatContract.Presenter {
 
     @Override
     public void disconnect() {
-        view.sendMessage(new Request(Action.DISCONNECT));
+        view.stopService();
     }
 
     @Override
     public void sendMessage(String msg) {
-        view.sendMessage(new Request(MyUtils.WIFIDirect.getCurrentUser(), msg, System.currentTimeMillis()));
+        view.sendMessage(new Message(MyUtils.WIFIDirect.getCurrentUser().getLogin(), msg, System.currentTimeMillis()));
     }
 }

@@ -36,13 +36,13 @@ public class LocalWifiDirectChatRepository implements ChatDataSource {
 
     @Override
     public void getMessages(String key, Event1<List<com.example.dmitro.chatapp.data.model.wifiDirect.Message>> messages, Event1<String> failure, Event0 complate) {
-        Realm realm = Realm.getDefaultInstance();
-        RealmResults<com.example.dmitro.chatapp.data.model.wifiDirect.Message> allMessages = realm.where(com.example.dmitro.chatapp.data.model.wifiDirect.Message.class).findAllAsync();
-        allMessages.addChangeListener(msg -> {
-            List<com.example.dmitro.chatapp.data.model.wifiDirect.Message> arr = realm.copyFromRealm(msg);
-            messages.call(arr);
-
-        });
+//        Realm realm = Realm.getDefaultInstance();
+//        RealmResults<com.example.dmitro.chatapp.data.model.wifiDirect.Message> allMessages = realm.where(com.example.dmitro.chatapp.data.model.wifiDirect.Message.class).findAllAsync();
+//        allMessages.addChangeListener(msg -> {
+//            List<com.example.dmitro.chatapp.data.model.wifiDirect.Message> arr = realm.copyFromRealm(msg);
+//            messages.call(arr);
+//
+//        });
     }
 
     @Override

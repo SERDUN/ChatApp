@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.example.dmitro.chatapp.ChatApp;
 import com.example.dmitro.chatapp.R;
 import com.example.dmitro.chatapp.connection.sockets.ServerService;
-import com.example.dmitro.chatapp.screen.chat.tcp_ip.TCPChatActivity;
+import com.example.dmitro.chatapp.screen.chat.host.HostChatActivity;
 import com.example.dmitro.chatapp.utils.MyUtils;
 
 import butterknife.BindView;
@@ -67,7 +67,7 @@ public class CreateServerFragment extends Fragment implements CreateServerContra
             MyUtils.WIFIDirect.setServerType();
             createIntentForService();
             getContext().startService(createIntentForService());
-            startActivity(new Intent(getContext(), TCPChatActivity.class));
+            startActivity(new Intent(getContext(), HostChatActivity.class));
         });
     }
 

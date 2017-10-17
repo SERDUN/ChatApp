@@ -1,47 +1,61 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
-
-
-    <Button
-        android:id="@+id/disconnectBT"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Disconnect" />
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#e1e1e1"
+    android:orientation="vertical" >
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/tcpMessagesTV"
+        android:id="@+id/msgRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="32.14" />
+        android:layout_height="match_parent"
+        android:layout_above="@+id/form"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:paddingBottom="10dp" />
 
     <LinearLayout
-
+        android:id="@+id/form"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="bottom"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:background="#91f1f1f1"
+        android:orientation="horizontal"
+        android:paddingBottom="2dp" >
 
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/stcpSendButton"
-            android:layout_width="wrap_content"
-            android:layout_height="60dp"
-            android:text="@string/send" />
 
         <EditText
-            android:id="@+id/tcpTextMessageEdit"
-            android:layout_width="match_parent"
+            android:id="@+id/messageEditText"
+            android:layout_width="252dp"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignTop="@+id/button1"
+            android:layout_toLeftOf="@+id/sendMessageButton"
+            android:layout_weight="0.72"
             android:ems="10"
-            android:inputType="textPersonName"
-            />
+            android:maxHeight="80dp" />
 
+        <ImageButton
+            android:layout_marginTop="5dp"
+            android:id="@+id/attachFileButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/attach_button"
+            android:text="d" />
+
+        <ImageButton
+            android:id="@+id/sendMessageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/send_button"
+            />
     </LinearLayout>
 
-</LinearLayout>
+
+</RelativeLayout>

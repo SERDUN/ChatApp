@@ -16,6 +16,7 @@ public class ChatApp extends Application {
     public static final String EXTRAS_GROUP_OWNER_ADDRESS = "go_host";
     public static final String EXTRAS_CONNECT = "go_connect";
     public static final String EXTRAS_DISCONNECT = "go_disconnect";
+    public static final String EXTRAS_FILE = "extras_file";
     public static String EXTRAS_MESSAGE = "message";
 
     public final static String BROADCAST_CONNECT_ACTION = "com.example.dmitro.chatapp.BROADCAST_CONNECT_ACTION";

@@ -37,6 +37,7 @@ public class ContractClass {
         public static final String COLUMN_NAME_TIME = "time";
         public static final String COLUMN_NAME_MESSAGE = "message";
         public static final String COLUMN_NAME_IS_NEW_USER = "is_new_user";
+        public static final String COLUMN_NAME_FILE_URI = "file_uri";
 
 
         public static final int MESSAGE_ID_PATH_POSITION = 1;
@@ -47,6 +48,7 @@ public class ContractClass {
                 Messages.COLUMN_NAME_LOGIN,
                 Messages.COLUMN_NAME_TIME,
                 Messages.COLUMN_NAME_MESSAGE,
+                Messages.COLUMN_NAME_FILE_URI,
                 Messages.COLUMN_NAME_IS_NEW_USER};
 
 

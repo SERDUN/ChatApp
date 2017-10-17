@@ -18,7 +18,6 @@ import com.example.dmitro.chatapp.R;
 import com.example.dmitro.chatapp.connection.sockets.SocketsManager;
 import com.example.dmitro.chatapp.data.model.wifiDirect.User;
 import com.example.dmitro.chatapp.screen.chat.host.HostChatActivity;
-import com.example.dmitro.chatapp.screen.chat.tcp_ip.TCPChatActivity;
 import com.example.dmitro.chatapp.utils.Observer;
 
 import java.util.ArrayList;

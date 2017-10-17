@@ -198,6 +198,7 @@ public class MessageProvider extends ContentProvider {
                         + ContractClass.Messages.COLUMN_NAME_TIME + " integer , "
                         + ContractClass.Messages.COLUMN_NAME_IS_NEW_USER + " string , "
                         + ContractClass.Messages.COLUMN_NAME_MESSAGE + " string , "
+                        + ContractClass.Messages.COLUMN_NAME_FILE_URI + " string , "
                         + " UNIQUE ( " + KEY_ROWID + " ) ON CONFLICT IGNORE" + ");";
 
 

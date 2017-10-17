@@ -21,7 +21,6 @@ import com.example.dmitro.chatapp.R;
 import com.example.dmitro.chatapp.connection.sockets.ClientService;
 import com.example.dmitro.chatapp.connection.sockets.ServerService;
 import com.example.dmitro.chatapp.screen.chat.client.ClientChatActivity;
-import com.example.dmitro.chatapp.screen.chat.tcp_ip.TCPChatActivity;
 import com.example.dmitro.chatapp.screen.setting.wifi_direct.PeersWifiDirectActivity;
 import com.example.dmitro.chatapp.screen.setting.wifi_direct.other.PeerRecyclerAdapter;
 import com.example.dmitro.chatapp.utils.MyUtils;

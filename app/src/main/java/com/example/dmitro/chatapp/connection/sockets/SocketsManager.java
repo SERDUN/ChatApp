@@ -1,17 +1,21 @@
 package com.example.dmitro.chatapp.connection.sockets;
 
 import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.example.dmitro.chatapp.data.model.wifiDirect.Action;
 import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
 import com.example.dmitro.chatapp.data.model.wifiDirect.request.Request;
 import com.example.dmitro.chatapp.data.model.wifiDirect.User;
-import com.example.dmitro.chatapp.data.model.wifiDirect.request.RequestMessage;
 import com.example.dmitro.chatapp.data.provider.ContractClass;
 import com.example.dmitro.chatapp.utils.MyUtils;
 import com.example.dmitro.chatapp.utils.Observable;
 import com.example.dmitro.chatapp.utils.Observer;
+import com.example.dmitro.chatapp.utils.StorageUtils;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -88,7 +92,11 @@ public class SocketsManager implements Observable {
         @Override
         public void run() {
             try {
-                Request object;// = (RequestMessage) inputStream.readObject();
+                Request object = (Request) inputStream.readObject();
+
+                if (object.getAction() == Action.GET_ALL_MESSAGE) {
+                    sendAllMessage(outputStream);
+                }
 //                object.setMessage("Увійшо в чат");
 //                user = new User(object.getAuthor().getLogin());
 //                users.add(user);
@@ -106,19 +114,10 @@ public class SocketsManager implements Observable {
                         outputStreams.remove(outputStream);
                         sockets.remove(socket);
                         users.remove(user);
-                    }
-                    if (object instanceof RequestMessage) {
-                        notifyAllAboutMessage(socket, object);
+                    } else {
+                        notifyAllAboutMessage(socket, object.getMessage());
 
                     }
-
-
-//                    else if (object.getAction() == Action.GET_ALL_MESSAGE) {
-//
-//                    } else {
-//                        notifyAllAboutMessage(socket, object);
-//
-//                    }
 
 
                 }
@@ -129,15 +128,38 @@ public class SocketsManager implements Observable {
             }
         }
 
+        private void sendAllMessage(ObjectOutputStream outputStream) {
+            Cursor c = contentResolver.query(
+                    ContractClass.Messages.CONTENT_URI,
+                    ContractClass.Messages.DEFAULT_PROJECTION,
+                    null, null,
+                    null);
+            try {
+                Request request = new Request(Action.GET_ALL_MESSAGE);
+                ArrayList<Message> arrayList = MyUtils.Converter.createMessageFromCursor(c);
+                request.setMessages(arrayList);
+                outputStream.writeObject(request);
+                outputStream.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
 
     }
 
-    public synchronized void notifyAllAboutMessage(Socket sender, Request request) {
-        Log.d(LOG_COUNT_CONNECTED, "count connected: " + sockets.size());
-        contentResolver.insert(ContractClass.Messages.CONTENT_URI,
-                MyUtils.Converter.createContentValues(request.);
+    public synchronized void notifyAllAboutMessage(Socket sender, Message message) {
+        if (message.getFile() != null) {
+            String uri = StorageUtils.saveToInternalStorage(BitmapFactory.decodeByteArray(message.getFile(), 0, message.getFile().length));
+            message.setUri(uri);
+        }
+
+        ContentValues contentValues = MyUtils.Converter.createContentValues(message);
+        contentResolver.insert(ContractClass.Messages.CONTENT_URI, contentValues);
         try {
             for (ObjectOutputStream out : outputStreams) {
+                Request request = new Request(null);
+                request.setMessage(message);
                 out.writeObject(request);
                 out.flush();
 
@@ -150,16 +172,21 @@ public class SocketsManager implements Observable {
     }
 
 
-    public synchronized void notifyAllAboutMessage(Request request) {
-        contentResolver.insert(ContractClass.Messages.CONTENT_URI,
-                MyUtils.Converter.createContentValues(Message.getInstanceFromRequest(request)));
+    public synchronized void notifyAllAboutMessage(Message message) {
+        if (message.getFile() != null) {
+            String uri = StorageUtils.saveToInternalStorage(BitmapFactory.decodeByteArray(message.getFile(), 0, message.getFile().length));
+            message.setUri(uri);
+        }
 
+        ContentValues contentValues = MyUtils.Converter.createContentValues(message);
+        contentResolver.insert(ContractClass.Messages.CONTENT_URI, contentValues);
 
         new Thread(() -> {
             try {
                 for (ObjectOutputStream out : outputStreams) {
+                    Request request = new Request(null);
+                    request.setMessage(message);
                     out.writeObject(request);
-                    out.flush();
 
                 }
             } catch (IOException e) {
