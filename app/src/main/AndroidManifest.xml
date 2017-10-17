@@ -7,8 +7,9 @@
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:name=".ChatApp"
@@ -25,7 +26,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".test.MainActivity" />
         <activity android:name=".screen.setting.wifi_direct.PeersWifiDirectActivity" />
 
         <service
@@ -41,9 +41,9 @@
             android:exported="false" />
 
         <activity android:name=".screen.setting.tcp_ip.TCPIPSettingActivity" />
-        <activity android:name=".screen.chat.tcp_ip.TCPChatActivity" />
         <activity android:name=".screen.chat.host.HostChatActivity" />
-        <activity android:name=".screen.chat.client.ClientChatActivity"></activity>
+        <activity android:name=".screen.chat.client.ClientChatActivity" />
+        <activity android:name=".screen.chat.setting_connection.SettingCurrentConnectionActivity"></activity>
     </application>
 
 </manifest>

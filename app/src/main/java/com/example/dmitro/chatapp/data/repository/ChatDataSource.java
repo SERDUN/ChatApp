@@ -1,6 +1,5 @@
 package com.example.dmitro.chatapp.data.repository;
 
-import com.example.dmitro.chatapp.data.model.firebase.ChannelKey;
 import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
 import com.example.dmitro.chatapp.data.model.wifiDirect.request.Request;
 import com.example.dmitro.chatapp.utils.event.Event0;
@@ -13,7 +12,6 @@ import java.util.List;
  */
 
 public interface ChatDataSource {
-    public void getListChannel(Event1<List<ChannelKey>> channels, Event1<String> failure, Event0 complate);
 
     public void getMessages(String key, Event1<List<Message>> messages, Event1<String> failure, Event0 complate);
 

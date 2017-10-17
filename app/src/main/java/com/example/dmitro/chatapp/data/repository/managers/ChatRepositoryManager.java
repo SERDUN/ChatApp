@@ -1,6 +1,5 @@
 package com.example.dmitro.chatapp.data.repository.managers;
 
-import com.example.dmitro.chatapp.data.model.firebase.ChannelKey;
 import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
 import com.example.dmitro.chatapp.data.model.wifiDirect.request.Request;
 import com.example.dmitro.chatapp.data.repository.ChatDataSource;
@@ -35,10 +34,6 @@ public class ChatRepositoryManager implements ChatDataSource{
         return instance;
     }
 
-    @Override
-    public void getListChannel(Event1<List<ChannelKey>> channels, Event1<String> failure, Event0 complate) {
-        chatRemoteRepository.getListChannel(channels, failure, complate);
-    }
 
     @Override
     public void getMessages(String key, Event1<List<com.example.dmitro.chatapp.data.model.wifiDirect.Message>> messages, Event1<String> failure, Event0 complate) {

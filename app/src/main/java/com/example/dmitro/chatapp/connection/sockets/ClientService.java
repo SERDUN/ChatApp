@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.example.dmitro.chatapp.ChatApp;
 import com.example.dmitro.chatapp.R;
 import com.example.dmitro.chatapp.data.model.wifiDirect.Action;
 import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
@@ -19,8 +20,6 @@ import com.example.dmitro.chatapp.data.model.wifiDirect.request.Request;
 import com.example.dmitro.chatapp.data.provider.ContractClass;
 import com.example.dmitro.chatapp.utils.MyUtils;
 import com.example.dmitro.chatapp.utils.StorageUtils;
-
-import org.apache.commons.io.IOUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -111,6 +110,13 @@ public class ClientService extends Service {
     }
 
     private void createConnection(Intent intent) {
+        ChatApp.getInstance().setEvent(() -> {
+            Log.d("ddddddddddddddd", "event________  STOP");
+
+            disconnect();
+            stopSelf();
+
+        });
         new Thread(() -> {
             socket = new Socket();
             int port = intent.getExtras().getInt(EXTRAS_GROUP_OWNER_PORT);
@@ -147,7 +153,7 @@ public class ClientService extends Service {
                     if (request.getAction() == Action.GET_ALL_MESSAGE) {
                         ///// TODO: 16.10.17 replace at transaction
                         for (Message message : request.getMessages()) {
-                            if(message.getFile()!=null){
+                            if (message.getFile() != null) {
                                 String uri = StorageUtils.saveToInternalStorage(BitmapFactory.decodeByteArray(message.getFile(), 0, message.getFile().length));
                                 message.setUri(uri);
                             }
@@ -157,7 +163,7 @@ public class ClientService extends Service {
                         }
                         Log.d(TAG, "listenerServer: ");
                     } else {
-                        if(request.getMessage().getFile()!=null){
+                        if (request.getMessage().getFile() != null) {
                             String uri = StorageUtils.saveToInternalStorage(BitmapFactory.decodeByteArray(request.getMessage().getFile(), 0, request.getMessage().getFile().length));
                             request.getMessage().setUri(uri);
                         }

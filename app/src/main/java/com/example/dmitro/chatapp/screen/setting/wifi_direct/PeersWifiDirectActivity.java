@@ -8,10 +8,10 @@ import android.net.wifi.p2p.WifiP2pManager;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.dmitro.chatapp.DetectActivity;
 import com.example.dmitro.chatapp.R;
 import com.example.dmitro.chatapp.screen.setting.tcp_ip.ViewPagerAdapter;
 import com.example.dmitro.chatapp.screen.setting.wifi_direct.create_server.CreateServerFragment;
@@ -27,7 +27,7 @@ import butterknife.ButterKnife;
 
 import static com.example.dmitro.chatapp.ChatApp.REQUEST_CODE_FOR_CHAT;
 
-public class PeersWifiDirectActivity extends AppCompatActivity implements PeersWifiDirectContract.View,WifiP2pManager.ChannelListener {
+public class PeersWifiDirectActivity extends DetectActivity implements PeersWifiDirectContract.View,WifiP2pManager.ChannelListener {
 
 
     public static final String TAG = "WifiDirectActivity_log";
@@ -139,12 +139,7 @@ public class PeersWifiDirectActivity extends AppCompatActivity implements PeersW
     }
 
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
 
-
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

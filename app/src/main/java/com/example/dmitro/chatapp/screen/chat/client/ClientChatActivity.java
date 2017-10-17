@@ -6,19 +6,23 @@ import android.content.ServiceConnection;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
+import com.example.dmitro.chatapp.DetectActivity;
 import com.example.dmitro.chatapp.R;
 import com.example.dmitro.chatapp.connection.sockets.ClientService;
 import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
@@ -29,6 +33,7 @@ import com.example.dmitro.chatapp.data.repository.managers.WifiDirectChatReposit
 import com.example.dmitro.chatapp.screen.chat.MessagesRecyclerAdapter;
 import com.example.dmitro.chatapp.screen.chat.TCPChatContract;
 import com.example.dmitro.chatapp.screen.chat.TCPChatWifiDirectPresenter;
+import com.example.dmitro.chatapp.screen.chat.setting_connection.SettingCurrentConnectionActivity;
 import com.example.dmitro.chatapp.utils.MyUtils;
 
 import java.util.ArrayList;
@@ -37,18 +42,16 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.example.dmitro.chatapp.ChatApp.EXTRAS_CONNECT;
-import static com.example.dmitro.chatapp.ChatApp.EXTRAS_DISCONNECT;
-import static com.example.dmitro.chatapp.ChatApp.EXTRAS_FILE;
-import static com.example.dmitro.chatapp.ChatApp.EXTRAS_MESSAGE;
-
-public class ClientChatActivity extends AppCompatActivity implements TCPChatContract.View {
+public class ClientChatActivity extends DetectActivity implements TCPChatContract.View {
 
 
     private static final int SELECT_PHOTO = 913;
+    private static final int SETTING_CLIENT_CONNECTION = 914;
+
     private TCPChatContract.Presenter presenter;
 
     public static final int BIND_SERVICE_FLAG = 0;
+
     @BindView(R.id.msgRecyclerView)
     RecyclerView messagesRecyclerView;
 
@@ -84,6 +87,9 @@ public class ClientChatActivity extends AppCompatActivity implements TCPChatCont
     }
 
     private void initView() {
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+
         attachFileButton.setOnClickListener(v -> {
             Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
             photoPickerIntent.setType("image/*");
@@ -139,6 +145,31 @@ public class ClientChatActivity extends AppCompatActivity implements TCPChatCont
             }
         };
         getContentResolver().registerContentObserver(ContractClass.Messages.CONTENT_URI, true, ob);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.client_menu, menu);
+        return true;
+    } public static final String EXTRAS_GROUP_OWNER_PORT = "go_port";
+    public static final String EXTRAS_GROUP_OWNER_ADDRESS = "go_host";
+    public static final String EXTRAS_CONNECT = "go_connect";
+    public static final String EXTRAS_DISCONNECT = "go_disconnect";
+    public static final String EXTRAS_FILE = "extras_file";
+    public static String EXTRAS_MESSAGE = "message";
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.setup_current_connection: {
+                Intent intent = new Intent(this, SettingCurrentConnectionActivity.class);
+                startActivityForResult(intent, SETTING_CLIENT_CONNECTION);
+                break;
+            }
+            // case blocks for other MenuItems (if any)
+        }
+        return false;
     }
 
     private void catchService() {
@@ -206,7 +237,6 @@ public class ClientChatActivity extends AppCompatActivity implements TCPChatCont
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-
         switch (requestCode) {
             case SELECT_PHOTO:
                 if (resultCode == RESULT_OK) {
@@ -216,6 +246,9 @@ public class ClientChatActivity extends AppCompatActivity implements TCPChatCont
                     startService(intentService);
 
                 }
+                break;
+            case SETTING_CLIENT_CONNECTION:
+                Toast.makeText(this, "continue work: "+MyUtils.SettingClientConnection.isContinue(), Toast.LENGTH_SHORT).show();
                 break;
         }
     }

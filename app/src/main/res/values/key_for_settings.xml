@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="setting_client">continue_work_client_connection</string>
+    <string name="continue_work_client_connection">continue_work_client_connection</string>
+
+</resources>

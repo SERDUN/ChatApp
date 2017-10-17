@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Log;
 
 import com.example.dmitro.chatapp.ChatApp;
 import com.example.dmitro.chatapp.R;
@@ -23,6 +21,17 @@ import java.util.ArrayList;
  */
 
 public class MyUtils {
+
+
+    public static class SettingClientConnection {
+        public static boolean isContinue() {
+            SharedPreferences sharedPref = ChatApp.getInstance().getSharedPreferences(ChatApp.getInstance().getString(R.string.setting_client),
+                    Context.MODE_PRIVATE);
+            boolean continueWork = sharedPref.getBoolean(ChatApp.getInstance().getString(R.string.continue_work_client_connection), false);
+            return continueWork;
+        }
+
+    }
 
     public static TypeConnection getCurrentTypeCoonection() {
         SharedPreferences sharedPref = ChatApp.getInstance().getSharedPreferences(ChatApp.getInstance().getString(R.string.connection_conf),
@@ -121,7 +130,7 @@ public class MyUtils {
                         String message = record.getString(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_MESSAGE));
                         long time = record.getLong(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_TIME));
                         Message message1 = new Message(login, message, time);
-                        if (file != null){
+                        if (file != null) {
                             ByteArrayOutputStream stream = new ByteArrayOutputStream();
                             StorageUtils.loadImageFromStorage(file).compress(Bitmap.CompressFormat.PNG, 100, stream);
                             byte[] byteArray = stream.toByteArray();

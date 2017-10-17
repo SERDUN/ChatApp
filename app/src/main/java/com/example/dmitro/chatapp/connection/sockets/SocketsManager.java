@@ -3,14 +3,12 @@ package com.example.dmitro.chatapp.connection.sockets;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Log;
 
 import com.example.dmitro.chatapp.data.model.wifiDirect.Action;
 import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
-import com.example.dmitro.chatapp.data.model.wifiDirect.request.Request;
 import com.example.dmitro.chatapp.data.model.wifiDirect.User;
+import com.example.dmitro.chatapp.data.model.wifiDirect.request.Request;
 import com.example.dmitro.chatapp.data.provider.ContractClass;
 import com.example.dmitro.chatapp.utils.MyUtils;
 import com.example.dmitro.chatapp.utils.Observable;
@@ -23,8 +21,6 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.LinkedList;
-
-import static com.example.dmitro.chatapp.ChatApp.LOG_COUNT_CONNECTED;
 
 /**
  * Created by dmitro on 09.10.17.

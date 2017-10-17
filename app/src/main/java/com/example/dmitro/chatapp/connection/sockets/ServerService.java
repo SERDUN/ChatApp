@@ -11,7 +11,6 @@ import android.util.Log;
 
 import com.example.dmitro.chatapp.R;
 import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
-import com.example.dmitro.chatapp.data.model.wifiDirect.request.Request;
 import com.example.dmitro.chatapp.utils.MyUtils;
 
 import java.io.ByteArrayOutputStream;

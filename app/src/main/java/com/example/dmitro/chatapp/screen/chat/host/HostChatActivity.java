@@ -6,11 +6,10 @@ import android.content.ServiceConnection;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -19,6 +18,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import com.example.dmitro.chatapp.DetectActivity;
 import com.example.dmitro.chatapp.R;
 import com.example.dmitro.chatapp.connection.sockets.ServerService;
 import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
@@ -41,7 +41,7 @@ import static com.example.dmitro.chatapp.ChatApp.EXTRAS_DISCONNECT;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_FILE;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_MESSAGE;
 
-public class HostChatActivity extends AppCompatActivity implements TCPChatContract.View {
+public class HostChatActivity extends DetectActivity implements TCPChatContract.View {
     private static final int SELECT_PHOTO = 913;
 
     private TCPChatContract.Presenter presenter;

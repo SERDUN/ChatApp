@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.dmitro.chatapp.screen.chat.setting_connection.SettingCurrentConnectionActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/middle_padding"
+        android:orientation="vertical">
+
+        <TextView
+            android:paddingBottom="@dimen/middle_padding"
+            android:gravity="center"
+            android:id="@+id/textView5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/сontinue_to_work_after_leaving_the_program" />
+
+        <ToggleButton
+            android:layout_gravity="center"
+            android:id="@+id/continueWorkTG"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="ToggleButton" />
+    </LinearLayout>
+</LinearLayout>

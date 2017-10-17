@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,11 +22,9 @@ import com.example.dmitro.chatapp.connection.sockets.ServerService;
 import com.example.dmitro.chatapp.screen.chat.client.ClientChatActivity;
 import com.example.dmitro.chatapp.screen.setting.wifi_direct.PeersWifiDirectActivity;
 import com.example.dmitro.chatapp.screen.setting.wifi_direct.other.PeerRecyclerAdapter;
-import com.example.dmitro.chatapp.utils.MyUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

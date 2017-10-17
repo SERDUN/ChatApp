@@ -1,15 +1,11 @@
 package com.example.dmitro.chatapp.data.repository.local;
 
-import com.example.dmitro.chatapp.data.model.firebase.ChannelKey;
 import com.example.dmitro.chatapp.data.model.wifiDirect.request.Request;
 import com.example.dmitro.chatapp.data.repository.ChatDataSource;
 import com.example.dmitro.chatapp.utils.event.Event0;
 import com.example.dmitro.chatapp.utils.event.Event1;
 
 import java.util.List;
-
-import io.realm.Realm;
-import io.realm.RealmResults;
 
 /**
  * Created by dmitro on 11.10.17.
@@ -29,10 +25,7 @@ public class LocalWifiDirectChatRepository implements ChatDataSource {
     }
 
 
-    @Override
-    public void getListChannel(Event1<List<ChannelKey>> channels, Event1<String> failure, Event0 complate) {
 
-    }
 
     @Override
     public void getMessages(String key, Event1<List<com.example.dmitro.chatapp.data.model.wifiDirect.Message>> messages, Event1<String> failure, Event0 complate) {

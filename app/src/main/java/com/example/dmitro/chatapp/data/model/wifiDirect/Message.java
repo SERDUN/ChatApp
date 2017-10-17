@@ -1,10 +1,7 @@
 package com.example.dmitro.chatapp.data.model.wifiDirect;
 
-import com.example.dmitro.chatapp.data.model.wifiDirect.request.Request;
-
 import java.io.Serializable;
 
-import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 /**

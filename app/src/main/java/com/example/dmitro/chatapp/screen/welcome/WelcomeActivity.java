@@ -3,7 +3,6 @@ package com.example.dmitro.chatapp.screen.welcome;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -12,6 +11,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.dmitro.chatapp.DetectActivity;
 import com.example.dmitro.chatapp.R;
 import com.example.dmitro.chatapp.screen.setting.tcp_ip.TCPIPSettingActivity;
 import com.example.dmitro.chatapp.screen.setting.wifi_direct.PeersWifiDirectActivity;
@@ -19,7 +19,7 @@ import com.example.dmitro.chatapp.screen.setting.wifi_direct.PeersWifiDirectActi
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class WelcomeActivity extends AppCompatActivity implements WelcomeContract.View {
+public class WelcomeActivity extends DetectActivity implements WelcomeContract.View {
 
     @BindView(R.id.typeConnectionSpinner)
     public Spinner typeConnectionSpinner;
@@ -30,11 +30,6 @@ public class WelcomeActivity extends AppCompatActivity implements WelcomeContrac
     @BindView(R.id.nameEditText)
     public EditText nameEditText;
 
-    @BindView(R.id.databaseTestWrite)
-    Button databaseButtonWrite;
-
-    @BindView(R.id.databaseTestRead)
-    Button databaseButtonRead;
 
     private WelcomeContract.Presenter presenter;
 
@@ -49,27 +44,7 @@ public class WelcomeActivity extends AppCompatActivity implements WelcomeContrac
         initView();
 
 
-
-
-
-
-        databaseButtonWrite.setOnClickListener(v -> {
-//            Message message = new Message("test", "message", System.currentTimeMillis());
-//            getContentResolver().insert(ContractClass.Messages.CONTENT_URI, createContentValues(message));
-
-
-        });
-
-        databaseButtonRead.setOnClickListener(v -> {
-
-
-        });
-
-
     }
-
-
-
 
 
     private void initView() {
@@ -135,4 +110,6 @@ public class WelcomeActivity extends AppCompatActivity implements WelcomeContrac
         Toast.makeText(this, getString(id), Toast.LENGTH_SHORT).show();
 
     }
+
+
 }

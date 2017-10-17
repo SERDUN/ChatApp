@@ -4,9 +4,6 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.widget.ImageView;
-
-import com.example.dmitro.chatapp.R;
 
 import java.io.File;
 import java.io.FileInputStream;
