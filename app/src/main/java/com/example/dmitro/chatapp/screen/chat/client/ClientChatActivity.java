@@ -25,11 +25,12 @@ import android.widget.Toast;
 import com.example.dmitro.chatapp.DetectActivity;
 import com.example.dmitro.chatapp.R;
 import com.example.dmitro.chatapp.connection.sockets.ClientService;
-import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
-import com.example.dmitro.chatapp.data.model.wifiDirect.request.Request;
+import com.example.dmitro.chatapp.data.model.wifiDirect.socket.data_object.Body;
+import com.example.dmitro.chatapp.data.model.wifiDirect.socket.data_object.Type;
+import com.example.dmitro.chatapp.data.model.wifiDirect.socket.transport_object.Action;
+import com.example.dmitro.chatapp.data.model.wifiDirect.socket.transport_object.Request;
 import com.example.dmitro.chatapp.data.provider.ContractClass;
-import com.example.dmitro.chatapp.data.repository.Injection;
-import com.example.dmitro.chatapp.data.repository.managers.WifiDirectChatRepositoryManager;
+
 import com.example.dmitro.chatapp.screen.chat.MessagesRecyclerAdapter;
 import com.example.dmitro.chatapp.screen.chat.TCPChatContract;
 import com.example.dmitro.chatapp.screen.chat.TCPChatWifiDirectPresenter;
@@ -41,6 +42,11 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.example.dmitro.chatapp.ChatApp.EXTRAS_CONNECT;
+import static com.example.dmitro.chatapp.ChatApp.EXTRAS_DISCONNECT;
+import static com.example.dmitro.chatapp.ChatApp.EXTRAS_FILE;
+import static com.example.dmitro.chatapp.ChatApp.EXTRAS_MESSAGE;
 
 public class ClientChatActivity extends DetectActivity implements TCPChatContract.View {
 
@@ -81,7 +87,7 @@ public class ClientChatActivity extends DetectActivity implements TCPChatContrac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_client_chat);
         ButterKnife.bind(this);
-        new TCPChatWifiDirectPresenter(this, (WifiDirectChatRepositoryManager) Injection.provideManager());
+        new TCPChatWifiDirectPresenter(this);
         initView();
         catchService();
     }
@@ -125,7 +131,8 @@ public class ClientChatActivity extends DetectActivity implements TCPChatContrac
         messagesRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         messagesRecyclerView.setAdapter(messagesRecyclerAdapter);
 
-        sendButton.setOnClickListener(view -> presenter.sendMessage(messageEditText.getText().toString()));
+        sendButton.setOnClickListener(view ->
+                presenter.sendMessage(messageEditText.getText().toString().getBytes(), Type.TEXT));
 
 //        disconnectBT.setOnClickListener(view -> {
 //            presenter.disconnect();
@@ -152,12 +159,7 @@ public class ClientChatActivity extends DetectActivity implements TCPChatContrac
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.client_menu, menu);
         return true;
-    } public static final String EXTRAS_GROUP_OWNER_PORT = "go_port";
-    public static final String EXTRAS_GROUP_OWNER_ADDRESS = "go_host";
-    public static final String EXTRAS_CONNECT = "go_connect";
-    public static final String EXTRAS_DISCONNECT = "go_disconnect";
-    public static final String EXTRAS_FILE = "extras_file";
-    public static String EXTRAS_MESSAGE = "message";
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -167,7 +169,6 @@ public class ClientChatActivity extends DetectActivity implements TCPChatContrac
                 startActivityForResult(intent, SETTING_CLIENT_CONNECTION);
                 break;
             }
-            // case blocks for other MenuItems (if any)
         }
         return false;
     }
@@ -208,15 +209,15 @@ public class ClientChatActivity extends DetectActivity implements TCPChatContrac
     }
 
     @Override
-    public void showMessages(List<Message> FMessages) {
+    public void showMessages(List<Body> FMessages) {
 
     }
 
     @Override
-    public void sendMessage(Message message) {
+    public void sendMessage(Body message) {
         intentService.removeExtra(EXTRAS_FILE);
         intentService.putExtra(EXTRAS_CONNECT, true);
-        intentService.putExtra(EXTRAS_MESSAGE, message);
+        intentService.putExtra(EXTRAS_MESSAGE, new Request(Action.PUT_PHOTO,message));
         startService(intentService);
         messageEditText.setText("");
     }
@@ -240,15 +241,12 @@ public class ClientChatActivity extends DetectActivity implements TCPChatContrac
         switch (requestCode) {
             case SELECT_PHOTO:
                 if (resultCode == RESULT_OK) {
-                    Uri selectedImage = imageReturnedIntent.getData();
-                    intentService.putExtra(EXTRAS_CONNECT, true);
-                    intentService.putExtra(EXTRAS_FILE, selectedImage.toString());
-                    startService(intentService);
+                    presenter.sendMessage(imageReturnedIntent.getData().toString().getBytes(), Type.URI_PHOTO);
 
                 }
                 break;
             case SETTING_CLIENT_CONNECTION:
-                Toast.makeText(this, "continue work: "+MyUtils.SettingClientConnection.isContinue(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "continue work: " + MyUtils.SettingClientConnection.isContinue(), Toast.LENGTH_SHORT).show();
                 break;
         }
     }

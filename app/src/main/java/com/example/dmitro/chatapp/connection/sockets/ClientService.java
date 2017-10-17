@@ -1,5 +1,3 @@
-// Copyright 2011 Google Inc. All Rights Reserved.
-
 package com.example.dmitro.chatapp.connection.sockets;
 
 import android.app.Service;
@@ -14,9 +12,10 @@ import android.util.Log;
 
 import com.example.dmitro.chatapp.ChatApp;
 import com.example.dmitro.chatapp.R;
-import com.example.dmitro.chatapp.data.model.wifiDirect.Action;
-import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
-import com.example.dmitro.chatapp.data.model.wifiDirect.request.Request;
+import com.example.dmitro.chatapp.data.model.wifiDirect.socket.data_object.Body;
+import com.example.dmitro.chatapp.data.model.wifiDirect.socket.data_object.Type;
+import com.example.dmitro.chatapp.data.model.wifiDirect.socket.transport_object.Action;
+import com.example.dmitro.chatapp.data.model.wifiDirect.socket.transport_object.Request;
 import com.example.dmitro.chatapp.data.provider.ContractClass;
 import com.example.dmitro.chatapp.utils.MyUtils;
 import com.example.dmitro.chatapp.utils.StorageUtils;
@@ -32,7 +31,6 @@ import java.net.Socket;
 
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_CONNECT;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_DISCONNECT;
-import static com.example.dmitro.chatapp.ChatApp.EXTRAS_FILE;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_GROUP_OWNER_ADDRESS;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_GROUP_OWNER_PORT;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_MESSAGE;
@@ -58,25 +56,21 @@ public class ClientService extends Service {
     }
 
     private void generateRequest(Intent intent) {
-        Request request = new Request(null);
-        request.setMessage((Message) intent.getSerializableExtra(EXTRAS_MESSAGE));
-        if (intent.getStringExtra(EXTRAS_FILE) != null) {
+        Request request = (Request) intent.getSerializableExtra(EXTRAS_MESSAGE);
+        if (request.getBody().getType() == Type.URI_PHOTO) {
             InputStream imageStream = null;
             try {
-                imageStream = getContentResolver().openInputStream(Uri.parse(intent.getStringExtra(EXTRAS_FILE)));
+                imageStream = getContentResolver().openInputStream(Uri.parse(new String(request.getBody().getBody())));
                 Bitmap img = BitmapFactory.decodeStream(imageStream);
-                Message message = new Message(MyUtils.WIFIDirect.getCurrentUser().getLogin(), "", System.currentTimeMillis());
-
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 img.compress(Bitmap.CompressFormat.PNG, 100, stream);
                 byte[] byteArray = stream.toByteArray();
-                message.setFile(byteArray);
-                request.setMessage(message);
+
+                request.getBody().setType(Type.PHOTO);
+                request.getBody().setBody(byteArray);
 
 
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
@@ -130,8 +124,8 @@ public class ClientService extends Service {
                 objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
                 objectInputStream = new ObjectInputStream(socket.getInputStream());
                 listenerServer(objectInputStream);
-                Request request = new Request(Action.GET_ALL_MESSAGE);
-                request.setMessage(new Message(MyUtils.WIFIDirect.getCurrentUser().getLogin(), "", System.currentTimeMillis()));
+                Request request = new Request(Action.ALL_MESSAGE);
+                request.setBody(new Body(MyUtils.WIFIDirect.getCurrentUser().getLogin(), System.currentTimeMillis(), "".getBytes(), Type.TEXT));
                 objectOutputStream.writeObject(request);
                 objectOutputStream.flush();
 
@@ -150,26 +144,16 @@ public class ClientService extends Service {
             try {
                 while (true) {
                     Request request = (Request) o.readObject();
-                    if (request.getAction() == Action.GET_ALL_MESSAGE) {
-                        ///// TODO: 16.10.17 replace at transaction
-                        for (Message message : request.getMessages()) {
-                            if (message.getFile() != null) {
-                                String uri = StorageUtils.saveToInternalStorage(BitmapFactory.decodeByteArray(message.getFile(), 0, message.getFile().length));
-                                message.setUri(uri);
-                            }
+                    switch (request.getAction()) {
+                        case ALL_MESSAGE:
+                            saveAllMessages(request);
+                            break;
+                        case MESSAGE:
+                            saveMessage(request.getBody());
+                            break;
 
-                            getContentResolver().insert(ContractClass.Messages.CONTENT_URI,
-                                    MyUtils.Converter.createContentValues(message));
-                        }
-                        Log.d(TAG, "listenerServer: ");
-                    } else {
-                        if (request.getMessage().getFile() != null) {
-                            String uri = StorageUtils.saveToInternalStorage(BitmapFactory.decodeByteArray(request.getMessage().getFile(), 0, request.getMessage().getFile().length));
-                            request.getMessage().setUri(uri);
-                        }
-                        getContentResolver().insert(ContractClass.Messages.CONTENT_URI,
-                                MyUtils.Converter.createContentValues(request.getMessage()));
                     }
+
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -178,6 +162,27 @@ public class ClientService extends Service {
             }
         }).start();
 
+    }
+
+    private void saveAllMessages(Request request) {
+        for (Body message : request.getMessages()) {
+            saveMessage(message);
+        }
+
+
+    }
+
+    private void saveMessage(Body message) {
+        switch (message.getType()) {
+            case PHOTO:
+                message.setType(Type.URI_PHOTO);
+                message.setBody(StorageUtils.saveToInternalStorage(BitmapFactory.decodeByteArray(message.getBody(), 0, message.getBody().length)).getBytes());
+                break;
+            case AUDIO:
+                break;
+        }
+        getContentResolver().insert(ContractClass.Messages.CONTENT_URI,
+                MyUtils.Converter.createContentValues(message));
     }
 
 

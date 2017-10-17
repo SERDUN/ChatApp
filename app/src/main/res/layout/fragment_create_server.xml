@@ -60,7 +60,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_weight="1"
-            android:text="@string/start_server" />
+            android:type="@string/start_server" />
     </LinearLayout>
 
 </LinearLayout>

@@ -20,6 +20,7 @@
     <string name="you_will_become_server_after_first_connection_client_to_your_device">you will become a server after the first connection of the client to your device</string>
     <string name="setup_current_connection">setup current connection</string>
     <string name="сontinue_to_work_after_leaving_the_program">Сontinue to work after leaving the program ?</string>
+    <string name="disconnect">Disconnect</string>
 
 
 </resources>

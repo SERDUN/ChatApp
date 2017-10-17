@@ -10,8 +10,9 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.example.dmitro.chatapp.R;
-import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
-import com.example.dmitro.chatapp.utils.MyUtils;
+import com.example.dmitro.chatapp.data.model.wifiDirect.socket.data_object.Body;
+import com.example.dmitro.chatapp.data.model.wifiDirect.socket.data_object.Type;
+import com.example.dmitro.chatapp.data.model.wifiDirect.socket.transport_object.Request;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -22,7 +23,6 @@ import java.net.Socket;
 
 import static com.example.dmitro.chatapp.ChatApp.BROADCAST_CONNECT_ACTION;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_CONNECT;
-import static com.example.dmitro.chatapp.ChatApp.EXTRAS_FILE;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_GROUP_OWNER_PORT;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_MESSAGE;
 import static com.example.dmitro.chatapp.ChatApp.STATUS_SERVER_STARTED_SUCCESS;
@@ -48,32 +48,30 @@ public class ServerService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
     private void generateRequest(Intent intent) {
-        Message message=(Message) intent.getSerializableExtra(EXTRAS_MESSAGE);
-
-        if (intent.getStringExtra(EXTRAS_FILE) != null) {
+        Request request = (Request) intent.getSerializableExtra(EXTRAS_MESSAGE);
+        if (request.getBody().getType() == Type.URI_PHOTO) {
             InputStream imageStream = null;
             try {
-                imageStream = getContentResolver().openInputStream(Uri.parse(intent.getStringExtra(EXTRAS_FILE)));
+                imageStream = getContentResolver().openInputStream(Uri.parse(new String(request.getBody().getBody())));
                 Bitmap img = BitmapFactory.decodeStream(imageStream);
-                 message = new Message(MyUtils.WIFIDirect.getCurrentUser().getLogin(), "", System.currentTimeMillis());
-
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 img.compress(Bitmap.CompressFormat.PNG, 100, stream);
                 byte[] byteArray = stream.toByteArray();
-                message.setFile(byteArray);
+
+                request.getBody().setType(Type.PHOTO);
+                request.getBody().setBody(byteArray);
 
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
 
-        sendMessage(message);
+
+        sendMessage(request.getBody());
 
     }
-    private void sendMessage(Message message) {
+    private void sendMessage(Body message) {
         socketsManager.notifyAllAboutMessage(message);
     }
 

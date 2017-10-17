@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_weight="1"
-            android:text="@string/your_port"
+            android:type="@string/your_port"
             android:textStyle="bold" />
 
         <EditText

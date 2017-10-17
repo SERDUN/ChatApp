@@ -9,7 +9,7 @@
         android:id="@+id/disconnectBT"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Disconnect" />
+        android:text="@string/disconnect" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/tcpMessagesTV"
@@ -30,7 +30,7 @@
             android:id="@+id/stcpSendButton"
             android:layout_width="wrap_content"
             android:layout_height="60dp"
-            android:text="@string/send" />
+            android:type="@string/send" />
 
         <EditText
             android:id="@+id/tcpTextMessageEdit"

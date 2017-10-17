@@ -31,7 +31,7 @@
             android:layout_margin="@dimen/middle_padding"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/enable_connection_in_chat_session" />
+            android:type="@string/enable_connection_in_chat_session" />
 
         <RadioGroup
             android:layout_width="match_parent"
@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/yes" />
+                android:type="@string/yes" />
 
             <RadioButton
                 android:id="@+id/radioButton"
@@ -52,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="@string/no" />
+                android:type="@string/no" />
 
         </RadioGroup>
     </LinearLayout>
@@ -71,7 +71,7 @@
             android:layout_height="60dp"
             android:enabled="false"
             android:layout_weight="1"
-            android:text="@string/you_will_become_server_after_first_connection_client_to_your_device" />
+            android:type="@string/you_will_become_server_after_first_connection_client_to_your_device" />
 
         <Button
             android:enabled="false"
@@ -79,7 +79,7 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_weight="1"
-            android:text="@string/go_to_the_dialogue_page" />
+            android:type="@string/go_to_the_dialogue_page" />
 
     </LinearLayout>
 
