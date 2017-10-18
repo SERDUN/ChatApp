@@ -148,18 +148,21 @@ public class SocketsManager implements Observable {
     public synchronized void notifyAllAboutMessage(Socket sender, Body message) {
         Type typeTmp = message.getType();
         byte[] bodyTmp = message.getBody();
+        ContentValues contentValues;
 
 
         switch (message.getType()) {
             case PHOTO:
                 message.setType(Type.URI_PHOTO);
                 message.setBody(StorageUtils.saveToInternalStorage(BitmapFactory.decodeByteArray(message.getBody(), 0, message.getBody().length)).getBytes());
-                ContentValues contentValues = MyUtils.Converter.createContentValues(message);
+                 contentValues = MyUtils.Converter.createContentValues(message);
                 contentResolver.insert(ContractClass.Messages.CONTENT_URI, contentValues);
                 break;
             case AUDIO:
                 break;
             case TEXT:
+                contentValues = MyUtils.Converter.createContentValues(message);
+                contentResolver.insert(ContractClass.Messages.CONTENT_URI, contentValues);
                 break;
         }
 
@@ -184,18 +187,21 @@ public class SocketsManager implements Observable {
     public synchronized void notifyAllAboutMessage(Body message) {
         Type typeTmp = message.getType();
         byte[] bodyTmp = message.getBody();
+        ContentValues contentValues;
 
 
         switch (message.getType()) {
             case PHOTO:
                 message.setType(Type.URI_PHOTO);
                 message.setBody(StorageUtils.saveToInternalStorage(BitmapFactory.decodeByteArray(message.getBody(), 0, message.getBody().length)).getBytes());
-                ContentValues contentValues = MyUtils.Converter.createContentValues(message);
+                contentValues = MyUtils.Converter.createContentValues(message);
                 contentResolver.insert(ContractClass.Messages.CONTENT_URI, contentValues);
                 break;
             case AUDIO:
                 break;
             case TEXT:
+                contentValues = MyUtils.Converter.createContentValues(message);
+                contentResolver.insert(ContractClass.Messages.CONTENT_URI, contentValues);
                 break;
         }
 

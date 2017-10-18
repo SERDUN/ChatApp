@@ -42,7 +42,7 @@ public class ContractClass {
                 Messages.COLUMN_NAME_LOGIN,
                 Messages.COLUMN_NAME_TIME,
                 Messages.COLUMN_NAME_BODY,
-                Messages.COLUMN_NAME_TIME};
+                Messages.COLUMN_NAME_TYPE};
 
 
     }

@@ -88,7 +88,7 @@ public class MyUtils {
             ContentValues value = new ContentValues();
             value.put(ContractClass.Messages.COLUMN_NAME_LOGIN, body.getLogin());
             value.put(ContractClass.Messages.COLUMN_NAME_TIME, body.getTime());
-            value.put(ContractClass.Messages.CONTENT_TYPE, body.getType().toString());
+            value.put(ContractClass.Messages.COLUMN_NAME_TYPE, body.getType().toString());
             value.put(ContractClass.Messages.COLUMN_NAME_BODY, body.getBody());
             return value;
         }
@@ -99,8 +99,8 @@ public class MyUtils {
             if (record.getCount() != 0) {
                 if (record.moveToFirst()) {
                     do {
-
-                        Type type = Type.fromString(record.getString(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_TYPE)));
+                        String r = record.getString(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_TYPE));
+                        Type type = Type.fromString(r);
                         String login = record.getString(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_LOGIN));
                         byte[] body = record.getBlob(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_BODY));
                         long time = record.getLong(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_TIME));

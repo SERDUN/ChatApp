@@ -217,7 +217,7 @@ public class ClientChatActivity extends DetectActivity implements TCPChatContrac
     public void sendMessage(Body message) {
         intentService.removeExtra(EXTRAS_FILE);
         intentService.putExtra(EXTRAS_CONNECT, true);
-        intentService.putExtra(EXTRAS_MESSAGE, new Request(Action.PUT_PHOTO,message));
+        intentService.putExtra(EXTRAS_MESSAGE, new Request(Action.MESSAGE,message));
         startService(intentService);
         messageEditText.setText("");
     }

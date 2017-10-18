@@ -46,6 +46,7 @@ public class Request implements Serializable {
     }
 
     public void setBody(Body body) {
+        this.body=new ArrayList<>();
         this.body.add(body);
     }
 
