@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:type="@string/сontinue_to_work_after_leaving_the_program" />
+            android:text="@string/сontinue_to_work_after_leaving_the_program" />
 
         <ToggleButton
             android:layout_gravity="center"

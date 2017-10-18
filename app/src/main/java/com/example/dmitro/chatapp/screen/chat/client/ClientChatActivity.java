@@ -27,12 +27,14 @@ import android.widget.Toast;
 import com.example.dmitro.chatapp.DetectActivity;
 import com.example.dmitro.chatapp.R;
 import com.example.dmitro.chatapp.connection.sockets.ClientService;
+import com.example.dmitro.chatapp.connection.sockets.ServerService;
 import com.example.dmitro.chatapp.data.model.wifiDirect.socket.data_object.Body;
 import com.example.dmitro.chatapp.data.model.wifiDirect.socket.data_object.Type;
 import com.example.dmitro.chatapp.data.model.wifiDirect.socket.transport_object.Action;
 import com.example.dmitro.chatapp.data.model.wifiDirect.socket.transport_object.Request;
 import com.example.dmitro.chatapp.data.provider.ContractClass;
 
+import com.example.dmitro.chatapp.screen.ChatConst;
 import com.example.dmitro.chatapp.screen.chat.MessagesRecyclerAdapter;
 import com.example.dmitro.chatapp.screen.chat.TCPChatContract;
 import com.example.dmitro.chatapp.screen.chat.TCPChatWifiDirectPresenter;
@@ -48,7 +50,13 @@ import butterknife.ButterKnife;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_CONNECT;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_DISCONNECT;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_FILE;
+import static com.example.dmitro.chatapp.ChatApp.EXTRAS_GROUP_OWNER_ADDRESS;
+import static com.example.dmitro.chatapp.ChatApp.EXTRAS_GROUP_OWNER_PORT;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_MESSAGE;
+import static com.example.dmitro.chatapp.screen.ChatConst.ACTION_SERVICE_MANIPULATE_KEY;
+import static com.example.dmitro.chatapp.screen.ChatConst.INIT_SOCKET;
+import static com.example.dmitro.chatapp.screen.ChatConst.SEND_DATA;
+import static com.example.dmitro.chatapp.screen.ChatConst.SOCKET_CONNECTION;
 
 public class ClientChatActivity extends DetectActivity implements TCPChatContract.View {
 
@@ -65,6 +73,8 @@ public class ClientChatActivity extends DetectActivity implements TCPChatContrac
 
     private TCPChatContract.Presenter presenter;
 
+
+    private boolean THIS_ACTIVITY_IS_HOST;
 
     @BindView(R.id.msgRecyclerView)
     RecyclerView messagesRecyclerView;
@@ -97,9 +107,12 @@ public class ClientChatActivity extends DetectActivity implements TCPChatContrac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_client_chat);
         ButterKnife.bind(this);
+//        THIS_ACTIVITY_IS_HOST = ;
+
         new TCPChatWifiDirectPresenter(this);
         initView();
-        catchService();
+        catchService(getIntent());
+
     }
 
     private void initView() {
@@ -154,11 +167,6 @@ public class ClientChatActivity extends DetectActivity implements TCPChatContrac
         sendButton.setOnClickListener(view ->
                 presenter.sendMessage(messageEditText.getText().toString().getBytes(), Type.TEXT));
 
-//        disconnectBT.setOnClickListener(view -> {
-//            presenter.disconnect();
-//            setResult(RESULT_OK, new Intent());
-//            finish();
-//        });
         ContentObserver ob = new ContentObserver(new Handler(Looper.getMainLooper())) {
             @Override
             public void onChange(boolean selfChangem, Uri uri) {
@@ -202,13 +210,16 @@ public class ClientChatActivity extends DetectActivity implements TCPChatContrac
                 Intent intent = new Intent(this, SettingCurrentConnectionActivity.class);
                 startActivityForResult(intent, SETTING_CLIENT_CONNECTION);
                 break;
+
             }
+            case R.id.leave_chat:
+                presenter.disconnect();
+                break;
         }
         return false;
     }
 
-    private void catchService() {
-
+    private void catchService(Intent intent) {
         serviceConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
@@ -220,10 +231,19 @@ public class ClientChatActivity extends DetectActivity implements TCPChatContrac
         };
 
 
-        intentService = new Intent(this, ClientService.class);
+        if (getIntent().getBooleanExtra(ChatConst.IS_HOST_SERVICE, false)) {
+            intent.setClass(this, ServerService.class);
+            bindService(intent, serviceConnection, BIND_SERVICE_FLAG);
 
+        } else {
+            intent.setClass(this, ClientService.class);
+            intent.putExtra(ACTION_SERVICE_MANIPULATE_KEY, SOCKET_CONNECTION);
+            bindService(intent, serviceConnection, BIND_SERVICE_FLAG);
+            startService(intent);
+        }
 
-        bindService(intentService, serviceConnection, BIND_SERVICE_FLAG);
+        intentService = intent;
+
     }
 
     @Override
@@ -249,8 +269,7 @@ public class ClientChatActivity extends DetectActivity implements TCPChatContrac
 
     @Override
     public void sendMessage(Body message) {
-        intentService.removeExtra(EXTRAS_FILE);
-        intentService.putExtra(EXTRAS_CONNECT, true);
+        intentService.putExtra(ACTION_SERVICE_MANIPULATE_KEY, SEND_DATA);
         intentService.putExtra(EXTRAS_MESSAGE, new Request(Action.MESSAGE, message));
         startService(intentService);
         messageEditText.setText("");
@@ -258,14 +277,16 @@ public class ClientChatActivity extends DetectActivity implements TCPChatContrac
 
     @Override
     public void disconnect(Request request) {
-
+//        intentService.putExtra(EXTRAS_DISCONNECT, true);
+//        setResult(RESULT_OK, new Intent());
+//        finish();
     }
 
 
     @Override
     public void stopService() {
-        intentService.putExtra(EXTRAS_DISCONNECT, true);
-        startService(intentService);
+//        intentService.putExtra(EXTRAS_DISCONNECT, true);
+//        startService(intentService);
     }
 
 
@@ -281,7 +302,7 @@ public class ClientChatActivity extends DetectActivity implements TCPChatContrac
                 break;
             case SELECT_AUDIO:
                 if (resultCode == RESULT_OK) {
-                            presenter.sendMessage(imageReturnedIntent.getData().toString().getBytes(), Type.URI_AUDIO);
+                    presenter.sendMessage(imageReturnedIntent.getData().toString().getBytes(), Type.URI_AUDIO);
 
                 }
                 break;

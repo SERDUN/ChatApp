@@ -5,6 +5,8 @@ import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import com.example.dmitro.chatapp.ChatApp;
+
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
@@ -21,7 +23,7 @@ import static io.realm.internal.SyncObjectServerFacade.getApplicationContext;
 
 public class StorageUtils {
     public static String saveToInternalStorage(byte[] bytes) {
-        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+        ContextWrapper cw = new ContextWrapper(ChatApp.getInstance().getBaseContext());
         File directory = cw.getDir("audioDir", Context.MODE_PRIVATE);
         String fileName = System.currentTimeMillis() + ".mp3";
         File mypath = new File(directory, fileName);
@@ -60,8 +62,8 @@ public class StorageUtils {
 
 
     public static String saveToInternalStorage(Bitmap bitmapImage) {
-        ContextWrapper cw = new ContextWrapper(getApplicationContext());
-        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
+        ContextWrapper cw = new ContextWrapper(ChatApp.getInstance().getBaseContext());
+        File directory = cw.getDir("image", Context.MODE_PRIVATE);
         String fileName = System.currentTimeMillis() + ".png";
         File mypath = new File(directory, fileName);
 

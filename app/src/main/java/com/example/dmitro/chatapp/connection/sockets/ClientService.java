@@ -36,6 +36,10 @@ import static com.example.dmitro.chatapp.ChatApp.EXTRAS_DISCONNECT;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_GROUP_OWNER_ADDRESS;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_GROUP_OWNER_PORT;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_MESSAGE;
+import static com.example.dmitro.chatapp.screen.ChatConst.ACTION_SERVICE_MANIPULATE_KEY;
+import static com.example.dmitro.chatapp.screen.ChatConst.SEND_DATA;
+import static com.example.dmitro.chatapp.screen.ChatConst.SOCKET_CONNECTION;
+import static com.example.dmitro.chatapp.screen.ChatConst.SOCKET_DISCONNECT;
 
 public class ClientService extends Service {
 
@@ -47,13 +51,20 @@ public class ClientService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent.getBooleanExtra(EXTRAS_DISCONNECT, false)) {
-            disconnect();
-        } else if (intent.getBooleanExtra(EXTRAS_CONNECT, false)) {
-            generateRequest(intent);
-        } else {
-            createConnection(intent);
+        switch (intent.getStringExtra(ACTION_SERVICE_MANIPULATE_KEY)) {
+
+            case SOCKET_CONNECTION:
+                createConnection(intent);
+                break;
+            case SOCKET_DISCONNECT:
+                disconnect();
+                break;
+            case SEND_DATA:
+                generateRequest(intent);
+                break;
         }
+
+
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -104,15 +115,16 @@ public class ClientService extends Service {
     }
 
     private void disconnect() {
-        try {
-            sendMessage(new Request(Action.DISCONNECT));
-            objectInputStream.close();
-            objectOutputStream.flush();
-            objectOutputStream.close();
-            socket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            sendMessage(new Request(Action.DISCONNECT));
+//            objectInputStream.close();
+//            objectOutputStream.flush();
+//            objectOutputStream.close();
+//            socket.close();
+//            stopSelf();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
 
@@ -129,12 +141,6 @@ public class ClientService extends Service {
 
 
     private void createConnection(Intent intent) {
-        ChatApp.getInstance().setEvent(() -> {
-
-            disconnect();
-            stopSelf();
-
-        });
         new Thread(() -> {
             socket = new Socket();
             int port = intent.getExtras().getInt(EXTRAS_GROUP_OWNER_PORT);
@@ -203,8 +209,8 @@ public class ClientService extends Service {
                 message.setBody(StorageUtils.saveToInternalStorage(BitmapFactory.decodeByteArray(message.getBody(), 0, message.getBody().length)).getBytes());
                 break;
             case AUDIO:
-              message.setType(Type.URI_AUDIO);
-              message.setBody(StorageUtils.saveToInternalStorage(message.getBody()).getBytes());
+                message.setType(Type.URI_AUDIO);
+                message.setBody(StorageUtils.saveToInternalStorage(message.getBody()).getBytes());
                 break;
         }
         getContentResolver().insert(ContractClass.Messages.CONTENT_URI,
@@ -216,5 +222,11 @@ public class ClientService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return new Binder();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy: ");
     }
 }

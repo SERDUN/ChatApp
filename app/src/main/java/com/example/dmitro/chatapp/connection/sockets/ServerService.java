@@ -28,6 +28,10 @@ import static com.example.dmitro.chatapp.ChatApp.EXTRAS_CONNECT;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_GROUP_OWNER_PORT;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_MESSAGE;
 import static com.example.dmitro.chatapp.ChatApp.STATUS_SERVER_STARTED_SUCCESS;
+import static com.example.dmitro.chatapp.screen.ChatConst.ACTION_SERVICE_MANIPULATE_KEY;
+import static com.example.dmitro.chatapp.screen.ChatConst.SEND_DATA;
+import static com.example.dmitro.chatapp.screen.ChatConst.SOCKET_CONNECTION;
+import static com.example.dmitro.chatapp.screen.ChatConst.SOCKET_DISCONNECT;
 
 /**
  * Created by dmitro on 09.10.17.
@@ -40,11 +44,16 @@ public class ServerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        if (intent.getBooleanExtra(EXTRAS_CONNECT, false)) {
 
-            generateRequest(intent);
-        } else {
-            createServer(intent);
+        switch (intent.getStringExtra(ACTION_SERVICE_MANIPULATE_KEY)) {
+            case SOCKET_CONNECTION:
+                createServer(intent);
+                break;
+            case SOCKET_DISCONNECT:
+                break;
+            case SEND_DATA:
+                generateRequest(intent);
+                break;
         }
 
         return super.onStartCommand(intent, flags, startId);

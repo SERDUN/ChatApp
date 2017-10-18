@@ -144,7 +144,7 @@ public class PeersWifiDirectActivity extends DetectActivity implements PeersWifi
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_FOR_CHAT) {
-            //closeConnection();
+           // closeConnection();
         } else {
             createServerFragment.onActivityResult(requestCode, resultCode, data);
         //    connectionToServerFragment.onActivityResult(requestCode, resultCode, data);
@@ -156,8 +156,8 @@ public class PeersWifiDirectActivity extends DetectActivity implements PeersWifi
 
     public void closeConnection() {
 
-        manager.removeGroup(channel,null);
-        manager.initialize(this, getMainLooper(), this);
+      ///  manager.removeGroup(channel,null);
+        // manager.initialize(this, getMainLooper(), this);
 
 
 

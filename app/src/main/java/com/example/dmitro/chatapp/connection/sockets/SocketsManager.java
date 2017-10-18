@@ -95,7 +95,6 @@ public class SocketsManager implements Observable {
                 try {
                     object = (Request) inputStream.readObject();
 
-
                     switch (object.getAction()) {
                         case ALL_MESSAGE:
                             sendAllMessage(outputStream);

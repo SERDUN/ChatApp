@@ -30,7 +30,8 @@
 
         <service
             android:name=".connection.sockets.ClientService"
-            android:enabled="true" />
+            android:enabled="true"
+            android:stopWithTask="true"/>
         <service
             android:name=".connection.sockets.ServerService"
             android:enabled="true" />

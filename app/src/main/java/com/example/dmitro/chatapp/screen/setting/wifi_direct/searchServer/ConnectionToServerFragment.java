@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.example.dmitro.chatapp.R;
 import com.example.dmitro.chatapp.connection.sockets.ClientService;
 import com.example.dmitro.chatapp.connection.sockets.ServerService;
+import com.example.dmitro.chatapp.screen.ChatConst;
 import com.example.dmitro.chatapp.screen.chat.client.ClientChatActivity;
 import com.example.dmitro.chatapp.screen.setting.wifi_direct.PeersWifiDirectActivity;
 import com.example.dmitro.chatapp.screen.setting.wifi_direct.other.PeerRecyclerAdapter;
@@ -33,6 +34,8 @@ import static com.example.dmitro.chatapp.ChatApp.EXTRAS_GROUP_OWNER_ADDRESS;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_GROUP_OWNER_PORT;
 import static com.example.dmitro.chatapp.ChatApp.PARAM_PINTENT;
 import static com.example.dmitro.chatapp.ChatApp.REQUEST_CODE_FOR_CHAT;
+import static com.example.dmitro.chatapp.screen.ChatConst.ACTION_SERVICE_MANIPULATE_KEY;
+import static com.example.dmitro.chatapp.screen.ChatConst.SOCKET_CONNECTION;
 
 /**
  * Created by dmitro on 10.10.17.
@@ -120,29 +123,28 @@ public class ConnectionToServerFragment extends Fragment implements ConnectionTo
 
         if (info.groupFormed && info.isGroupOwner) {
             Toast.makeText(getContext(), "SERVER", Toast.LENGTH_SHORT).show();
-                  getContext().startService(createIntentForService());
+
+            getContext().startService(createIntentForService());
 
 
         } else if (info.groupFormed) {
             Toast.makeText(getContext(), "Client", Toast.LENGTH_SHORT).show();
 
-//            hostAddress.add(info.groupOwnerAddress.getHostAddress());
-//
-////            if (hostAddress.contains(info.groupOwnerAddress.getHostAddress())) {
-            Intent intent = new Intent(getContext(), ClientService.class);
+
+            Intent intent = new Intent(getContext(), ClientChatActivity.class);
             intent.putExtra(EXTRAS_GROUP_OWNER_ADDRESS,
                     info.groupOwnerAddress.getHostAddress());
             intent.putExtra(EXTRAS_GROUP_OWNER_PORT, Integer.valueOf(getString(R.string.default_port)));
-            getContext().startService(intent);
-
-            Intent chatIntent = new Intent(getContext(), ClientChatActivity.class);
-            getActivity().startActivityForResult(chatIntent, REQUEST_CODE_FOR_CHAT);
+            intent.putExtra(ChatConst.IS_HOST_SERVICE, false);
+            getContext().startActivity(intent);
         }
-        //}
     }
 
     private Intent createIntentForService() {
-        Intent intent = new Intent(getContext(), ServerService.class).putExtra(PARAM_PINTENT, pendingIntent);
+        Intent intent = new Intent(getContext(), ServerService.class);
+        intent.putExtra(ACTION_SERVICE_MANIPULATE_KEY, SOCKET_CONNECTION);
+
+
         return intent;
     }
 
