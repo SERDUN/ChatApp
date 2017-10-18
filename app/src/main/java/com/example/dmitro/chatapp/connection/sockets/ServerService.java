@@ -14,6 +14,8 @@ import com.example.dmitro.chatapp.data.model.wifiDirect.socket.data_object.Body;
 import com.example.dmitro.chatapp.data.model.wifiDirect.socket.data_object.Type;
 import com.example.dmitro.chatapp.data.model.wifiDirect.socket.transport_object.Request;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -47,29 +49,52 @@ public class ServerService extends Service {
 
         return super.onStartCommand(intent, flags, startId);
     }
-    private void generateRequest(Intent intent) {
-        Request request = (Request) intent.getSerializableExtra(EXTRAS_MESSAGE);
-        if (request.getBody().getType() == Type.URI_PHOTO) {
-            InputStream imageStream = null;
-            try {
-                imageStream = getContentResolver().openInputStream(Uri.parse(new String(request.getBody().getBody())));
-                Bitmap img = BitmapFactory.decodeStream(imageStream);
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                img.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                byte[] byteArray = stream.toByteArray();
-
-                request.getBody().setType(Type.PHOTO);
-                request.getBody().setBody(byteArray);
-
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+        private void generateRequest(Intent intent) {
+            Request request = (Request) intent.getSerializableExtra(EXTRAS_MESSAGE);
+            switch (request.getBody().getType()) {
+                case URI_PHOTO:
+                    replacePhotoUriOnData(getStreamByUri(Uri.parse(new String(request.getBody().getBody()))), request);
+                    break;
+                case URI_AUDIO:
+                    replaceAudioUriOnData(getStreamByUri(Uri.parse(new String(request.getBody().getBody()))), request);
+                    break;
             }
+            sendMessage(request.getBody());
+
+
+    }
+
+
+    private void replacePhotoUriOnData(InputStream imgStream, Request request) {
+        Bitmap img = BitmapFactory.decodeStream(imgStream);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        img.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+
+        request.getBody().setType(Type.PHOTO);
+        request.getBody().setBody(byteArray);
+    }
+
+    private void replaceAudioUriOnData(InputStream audioStream, Request request) {
+        try {
+            byte[] byteArray = IOUtils.toByteArray(audioStream);
+            request.getBody().setType(Type.AUDIO);
+            request.getBody().setBody(byteArray);
+        } catch (IOException e) {
+
+
         }
 
+    }
 
-        sendMessage(request.getBody());
-
+    private InputStream getStreamByUri(Uri uri) {
+        InputStream data = null;
+        try {
+            data = getContentResolver().openInputStream(uri);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return data;
     }
     private void sendMessage(Body message) {
         socketsManager.notifyAllAboutMessage(message);
@@ -92,14 +117,7 @@ public class ServerService extends Service {
 
                 }
             } catch (IOException e) {
-                Log.d("hhh", "createServer: ");
-//                try {
-//                   // pendingIntent.send(this, STATUS_SERVER_STARTED_FAILURE, null);
-//                } catch (PendingIntent.CanceledException e1) {
-//                    e1.printStackTrace();
-//                }
-//            } catch (PendingIntent.CanceledException e) {
-//                e.printStackTrace();
+
             }
         }).start();
     }

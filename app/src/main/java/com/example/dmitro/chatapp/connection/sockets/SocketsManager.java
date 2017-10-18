@@ -159,6 +159,10 @@ public class SocketsManager implements Observable {
                 contentResolver.insert(ContractClass.Messages.CONTENT_URI, contentValues);
                 break;
             case AUDIO:
+                message.setType(Type.URI_AUDIO);
+                message.setBody(StorageUtils.saveToInternalStorage(message.getBody()).getBytes());
+                contentValues = MyUtils.Converter.createContentValues(message);
+                contentResolver.insert(ContractClass.Messages.CONTENT_URI, contentValues);
                 break;
             case TEXT:
                 contentValues = MyUtils.Converter.createContentValues(message);
@@ -198,6 +202,10 @@ public class SocketsManager implements Observable {
                 contentResolver.insert(ContractClass.Messages.CONTENT_URI, contentValues);
                 break;
             case AUDIO:
+                message.setType(Type.URI_AUDIO);
+                message.setBody(StorageUtils.saveToInternalStorage(message.getBody()).getBytes());
+                contentValues = MyUtils.Converter.createContentValues(message);
+                contentResolver.insert(ContractClass.Messages.CONTENT_URI, contentValues);
                 break;
             case TEXT:
                 contentValues = MyUtils.Converter.createContentValues(message);

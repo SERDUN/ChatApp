@@ -94,6 +94,20 @@ public class MyUtils {
         }
 
 
+//
+//        String s = ;
+//        byte[] arr = StorageUtils.loadByteArrayFromStorage(s);
+
+
+        //         if (type == Type.URI_PHOTO) {
+////// TODO: 18.10.17 replace
+//            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//            StorageUtils.loadImageFromStorage(new String(body)).compress(Bitmap.CompressFormat.PNG, 100, stream);
+//            byte[] byteArray = stream.toByteArray();
+//
+//            messageObj.setType(Type.PHOTO);
+//            messageObj.setBody(byteArray);
+//        }
         public static Body createContentValues(Cursor record) {
             Body messageObj = null;
             if (record.getCount() != 0) {
@@ -104,23 +118,39 @@ public class MyUtils {
                         String login = record.getString(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_LOGIN));
                         byte[] body = record.getBlob(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_BODY));
                         long time = record.getLong(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_TIME));
-
                         messageObj = new Body(login, time, body, type);
-                        if (type == Type.URI_PHOTO) {
-//// TODO: 18.10.17 replace
-                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                            StorageUtils.loadImageFromStorage(new String(body)).compress(Bitmap.CompressFormat.PNG, 100, stream);
-                            byte[] byteArray = stream.toByteArray();
 
-                            messageObj.setType(Type.PHOTO);
-                            messageObj.setBody(byteArray);
+                        switch (type) {
+                            case URI_PHOTO:
+                                replacePhotoIriOnData(body, messageObj);
+                                break;
+                            case URI_AUDIO:
+//                                replaceAudioIriOnData(body, messageObj);
+                                break;
                         }
+
                     } while (record.moveToNext());
                 }
             }
             record.close();
 
             return messageObj;
+        }
+
+        private static void replacePhotoIriOnData(byte[] uri, Body messageObj) {
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            StorageUtils.loadImageFromStorage(new String(uri)).compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byte[] byteArray = stream.toByteArray();
+
+            messageObj.setType(Type.PHOTO);
+            messageObj.setBody(byteArray);
+        }
+
+
+        private static void replaceAudioIriOnData(byte[] uri, Body messageObj) {
+            byte[] byteArray = StorageUtils.loadByteArrayFromStorage(new String(uri));
+            messageObj.setType(Type.AUDIO);
+            messageObj.setBody(byteArray);
         }
 
 
@@ -135,14 +165,13 @@ public class MyUtils {
                         long time = record.getLong(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_TIME));
 
                         Body message = new Body(login, time, body, type);
-                        if (type == Type.URI_PHOTO) {
-//// TODO: 18.10.17 replace
-                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                            StorageUtils.loadImageFromStorage(new String(body)).compress(Bitmap.CompressFormat.PNG, 100, stream);
-                            byte[] byteArray = stream.toByteArray();
-
-                            message.setType(Type.PHOTO);
-                            message.setBody(byteArray);
+                        switch (type) {
+                            case URI_PHOTO:
+                                replacePhotoIriOnData(body, message);
+                                break;
+                            case URI_AUDIO:
+                                replaceAudioIriOnData(body, message);
+                                break;
                         }
                         messages.add(message);
                     } while (record.moveToNext());

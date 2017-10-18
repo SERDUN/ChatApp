@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="300dp"
+    android:minHeight="200dp"
+    android:layout_width="300dp"
+    android:layout_height="300dp"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <Button
+        android:layout_margin="@dimen/middle_padding"
+        android:id="@+id/photoBT"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Photo" />
+
+    <Button
+        android:layout_margin="@dimen/middle_padding"
+        android:id="@+id/audioBT"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Audio" />
+</LinearLayout>

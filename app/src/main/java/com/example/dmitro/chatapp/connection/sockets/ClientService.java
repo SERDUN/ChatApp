@@ -20,6 +20,8 @@ import com.example.dmitro.chatapp.data.provider.ContractClass;
 import com.example.dmitro.chatapp.utils.MyUtils;
 import com.example.dmitro.chatapp.utils.StorageUtils;
 
+import org.apache.commons.io.IOUtils;
+
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -57,26 +59,48 @@ public class ClientService extends Service {
 
     private void generateRequest(Intent intent) {
         Request request = (Request) intent.getSerializableExtra(EXTRAS_MESSAGE);
-        if (request.getBody().getType() == Type.URI_PHOTO) {
-            InputStream imageStream = null;
-            try {
-                imageStream = getContentResolver().openInputStream(Uri.parse(new String(request.getBody().getBody())));
-                Bitmap img = BitmapFactory.decodeStream(imageStream);
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                img.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                byte[] byteArray = stream.toByteArray();
-
-                request.getBody().setType(Type.PHOTO);
-                request.getBody().setBody(byteArray);
-
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+        switch (request.getBody().getType()) {
+            case URI_PHOTO:
+                replacePhotoUriOnData(getStreamByUri(Uri.parse(new String(request.getBody().getBody()))), request);
+                break;
+            case URI_AUDIO:
+                replaceAudioUriOnData(getStreamByUri(Uri.parse(new String(request.getBody().getBody()))), request);
+                break;
         }
-
         sendMessage(request);
 
+    }
+
+    private void replacePhotoUriOnData(InputStream imgStream, Request request) {
+        Bitmap img = BitmapFactory.decodeStream(imgStream);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        img.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+
+        request.getBody().setType(Type.PHOTO);
+        request.getBody().setBody(byteArray);
+    }
+
+    private void replaceAudioUriOnData(InputStream audioStream, Request request) {
+        try {
+            byte[] byteArray = IOUtils.toByteArray(audioStream);
+            request.getBody().setType(Type.AUDIO);
+            request.getBody().setBody(byteArray);
+        } catch (IOException e) {
+
+
+        }
+
+    }
+
+    private InputStream getStreamByUri(Uri uri) {
+        InputStream data = null;
+        try {
+            data = getContentResolver().openInputStream(uri);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return data;
     }
 
     private void disconnect() {
@@ -103,9 +127,9 @@ public class ClientService extends Service {
 
     }
 
+
     private void createConnection(Intent intent) {
         ChatApp.getInstance().setEvent(() -> {
-            Log.d("ddddddddddddddd", "event________  STOP");
 
             disconnect();
             stopSelf();
@@ -179,6 +203,8 @@ public class ClientService extends Service {
                 message.setBody(StorageUtils.saveToInternalStorage(BitmapFactory.decodeByteArray(message.getBody(), 0, message.getBody().length)).getBytes());
                 break;
             case AUDIO:
+              message.setType(Type.URI_AUDIO);
+              message.setBody(StorageUtils.saveToInternalStorage(message.getBody()).getBytes());
                 break;
         }
         getContentResolver().insert(ContractClass.Messages.CONTENT_URI,

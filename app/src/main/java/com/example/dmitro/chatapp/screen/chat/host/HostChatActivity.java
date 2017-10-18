@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -35,6 +36,7 @@ import com.example.dmitro.chatapp.data.provider.ContractClass;
 import com.example.dmitro.chatapp.screen.chat.MessagesRecyclerAdapter;
 import com.example.dmitro.chatapp.screen.chat.TCPChatContract;
 import com.example.dmitro.chatapp.screen.chat.TCPChatWifiDirectPresenter;
+import com.example.dmitro.chatapp.screen.chat.client.ChoseTypeFileDialog;
 import com.example.dmitro.chatapp.screen.chat.setting_connection.SettingCurrentConnectionActivity;
 import com.example.dmitro.chatapp.utils.MyUtils;
 
@@ -51,12 +53,19 @@ import static com.example.dmitro.chatapp.ChatApp.EXTRAS_MESSAGE;
 
 public class HostChatActivity extends DetectActivity implements TCPChatContract.View {
 
+
     private static final int SELECT_PHOTO = 913;
-    private static final int SETTING_CLIENT_CONNECTION = 914;
+    private static final int SELECT_AUDIO = 914;
+
+    private static final int SETTING_CLIENT_CONNECTION = 800;
+
+
+    public static final int BIND_SERVICE_FLAG = 0;
+
+    private static final String TYPE_FILE_DIALOG = "type_file_dialog";
 
     private TCPChatContract.Presenter presenter;
 
-    public static final int BIND_SERVICE_FLAG = 0;
 
     @BindView(R.id.msgRecyclerView)
     RecyclerView messagesRecyclerView;
@@ -82,6 +91,8 @@ public class HostChatActivity extends DetectActivity implements TCPChatContract.
 
     private Intent intentService;
 
+    private DialogFragment typeFileDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,10 +107,20 @@ public class HostChatActivity extends DetectActivity implements TCPChatContract.
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
+        typeFileDialog = new ChoseTypeFileDialog();
+        ((ChoseTypeFileDialog) typeFileDialog).setClickableListener(id -> {
+            switch (id) {
+                case R.id.audioBT:
+                    openAudioDialog();
+                    break;
+                case R.id.photoBT:
+                    openPhotoDialog();
+
+                    break;
+            }
+        });
         attachFileButton.setOnClickListener(v -> {
-            Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-            photoPickerIntent.setType("image/*");
-            startActivityForResult(photoPickerIntent, SELECT_PHOTO);
+            typeFileDialog.show(getSupportFragmentManager(), TYPE_FILE_DIALOG);
         });
         messageEditText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -152,6 +173,20 @@ public class HostChatActivity extends DetectActivity implements TCPChatContract.
             }
         };
         getContentResolver().registerContentObserver(ContractClass.Messages.CONTENT_URI, true, ob);
+    }
+
+    private void openAudioDialog() {
+        Intent intent_upload = new Intent();
+        intent_upload.setType("audio/*");
+        intent_upload.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent_upload, SELECT_AUDIO);
+    }
+
+    private void openPhotoDialog() {
+        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+        photoPickerIntent.setType("image/*");
+        startActivityForResult(photoPickerIntent, SELECT_PHOTO);
+
     }
 
 
@@ -217,7 +252,7 @@ public class HostChatActivity extends DetectActivity implements TCPChatContract.
     public void sendMessage(Body message) {
         intentService.removeExtra(EXTRAS_FILE);
         intentService.putExtra(EXTRAS_CONNECT, true);
-        intentService.putExtra(EXTRAS_MESSAGE, new Request(Action.PUT_PHOTO,message));
+        intentService.putExtra(EXTRAS_MESSAGE, new Request(Action.MESSAGE, message));
         startService(intentService);
         messageEditText.setText("");
     }
@@ -245,6 +280,13 @@ public class HostChatActivity extends DetectActivity implements TCPChatContract.
 
                 }
                 break;
+            case SELECT_AUDIO:
+                if (resultCode == RESULT_OK) {
+                    presenter.sendMessage(imageReturnedIntent.getData().toString().getBytes(), Type.URI_AUDIO);
+
+                }
+                break;
+
             case SETTING_CLIENT_CONNECTION:
                 Toast.makeText(this, "continue work: " + MyUtils.SettingClientConnection.isContinue(), Toast.LENGTH_SHORT).show();
                 break;
