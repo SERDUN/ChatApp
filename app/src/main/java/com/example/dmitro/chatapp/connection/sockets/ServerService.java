@@ -13,6 +13,7 @@ import com.example.dmitro.chatapp.R;
 import com.example.dmitro.chatapp.data.model.wifiDirect.socket.data_object.Body;
 import com.example.dmitro.chatapp.data.model.wifiDirect.socket.data_object.Type;
 import com.example.dmitro.chatapp.data.model.wifiDirect.socket.transport_object.Request;
+import com.example.dmitro.chatapp.utils.ServiceUtil;
 
 import org.apache.commons.io.IOUtils;
 
@@ -29,6 +30,7 @@ import static com.example.dmitro.chatapp.ChatApp.EXTRAS_GROUP_OWNER_PORT;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_MESSAGE;
 import static com.example.dmitro.chatapp.ChatApp.STATUS_SERVER_STARTED_SUCCESS;
 import static com.example.dmitro.chatapp.screen.ChatConst.ACTION_SERVICE_MANIPULATE_KEY;
+import static com.example.dmitro.chatapp.screen.ChatConst.BIND_TO_SERVICE;
 import static com.example.dmitro.chatapp.screen.ChatConst.SEND_DATA;
 import static com.example.dmitro.chatapp.screen.ChatConst.SOCKET_CONNECTION;
 import static com.example.dmitro.chatapp.screen.ChatConst.SOCKET_DISCONNECT;
@@ -54,21 +56,25 @@ public class ServerService extends Service {
             case SEND_DATA:
                 generateRequest(intent);
                 break;
+            case BIND_TO_SERVICE:
+//action
+                break;
         }
 
         return super.onStartCommand(intent, flags, startId);
     }
-        private void generateRequest(Intent intent) {
-            Request request = (Request) intent.getSerializableExtra(EXTRAS_MESSAGE);
-            switch (request.getBody().getType()) {
-                case URI_PHOTO:
-                    replacePhotoUriOnData(getStreamByUri(Uri.parse(new String(request.getBody().getBody()))), request);
-                    break;
-                case URI_AUDIO:
-                    replaceAudioUriOnData(getStreamByUri(Uri.parse(new String(request.getBody().getBody()))), request);
-                    break;
-            }
-            sendMessage(request.getBody());
+
+    private void generateRequest(Intent intent) {
+        Request request = (Request) intent.getSerializableExtra(EXTRAS_MESSAGE);
+        switch (request.getBody().getType()) {
+            case URI_PHOTO:
+                replacePhotoUriOnData(getStreamByUri(Uri.parse(new String(request.getBody().getBody()))), request);
+                break;
+            case URI_AUDIO:
+                replaceAudioUriOnData(getStreamByUri(Uri.parse(new String(request.getBody().getBody()))), request);
+                break;
+        }
+        sendMessage(request.getBody());
 
 
     }
@@ -105,6 +111,7 @@ public class ServerService extends Service {
         }
         return data;
     }
+
     private void sendMessage(Body message) {
         socketsManager.notifyAllAboutMessage(message);
     }
@@ -119,6 +126,8 @@ public class ServerService extends Service {
                 Intent in = new Intent(BROADCAST_CONNECT_ACTION);
                 in.putExtra(EXTRAS_CONNECT, STATUS_SERVER_STARTED_SUCCESS);
                 sendBroadcast(in);
+                ServiceUtil.Server.serviceServerIsRunning();
+
 
                 while (true) {
                     Socket client = serverSocket.accept();

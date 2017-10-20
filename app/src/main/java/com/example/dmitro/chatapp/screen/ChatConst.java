@@ -12,6 +12,13 @@ public class ChatConst {
     public static final String SOCKET_CONNECTION = "socket_connection_";//value//////
     public static final String SOCKET_DISCONNECT = "socket_disconnect_";//value//////
     public static final String SEND_DATA = "send_data_";//value   ///////////////////
+    public static final String BIND_TO_SERVICE = "bind_to_service";/////////////////////////////
+
+
+
+    public static final String IS_SERVICE_CLIENT_RUNNING = "is_service_client_running";
+    public static final String IS_SERVICE_SERVER_RUNNING = "is_service_client_running";
+
 
 
 }

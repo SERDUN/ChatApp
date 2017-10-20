@@ -48,7 +48,6 @@ public class ChatApp extends Application {
 
     public final static String PARAM_PINTENT = "pendingIntent";
 
-    public final static String LOG_COUNT_CONNECTED = "log_count_connected";
 
     public boolean isAppRunning = true;
     public final int timerRate = 500;    // Execute timer task every 500mS

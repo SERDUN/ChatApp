@@ -18,6 +18,7 @@ import com.example.dmitro.chatapp.data.model.wifiDirect.socket.transport_object.
 import com.example.dmitro.chatapp.data.model.wifiDirect.socket.transport_object.Request;
 import com.example.dmitro.chatapp.data.provider.ContractClass;
 import com.example.dmitro.chatapp.utils.MyUtils;
+import com.example.dmitro.chatapp.utils.ServiceUtil;
 import com.example.dmitro.chatapp.utils.StorageUtils;
 
 import org.apache.commons.io.IOUtils;
@@ -37,6 +38,7 @@ import static com.example.dmitro.chatapp.ChatApp.EXTRAS_GROUP_OWNER_ADDRESS;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_GROUP_OWNER_PORT;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_MESSAGE;
 import static com.example.dmitro.chatapp.screen.ChatConst.ACTION_SERVICE_MANIPULATE_KEY;
+import static com.example.dmitro.chatapp.screen.ChatConst.BIND_TO_SERVICE;
 import static com.example.dmitro.chatapp.screen.ChatConst.SEND_DATA;
 import static com.example.dmitro.chatapp.screen.ChatConst.SOCKET_CONNECTION;
 import static com.example.dmitro.chatapp.screen.ChatConst.SOCKET_DISCONNECT;
@@ -61,6 +63,9 @@ public class ClientService extends Service {
                 break;
             case SEND_DATA:
                 generateRequest(intent);
+                break;
+            case BIND_TO_SERVICE:
+//action
                 break;
         }
 
@@ -158,6 +163,8 @@ public class ClientService extends Service {
                 request.setBody(new Body(MyUtils.WIFIDirect.getCurrentUser().getLogin(), System.currentTimeMillis(), "".getBytes(), Type.TEXT));
                 objectOutputStream.writeObject(request);
                 objectOutputStream.flush();
+
+                ServiceUtil.Client.serviceClientIsRunning();
 
 
             } catch (IOException e) {
