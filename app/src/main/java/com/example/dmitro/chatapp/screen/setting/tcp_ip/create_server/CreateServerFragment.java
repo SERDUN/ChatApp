@@ -13,11 +13,16 @@ import android.widget.TextView;
 import com.example.dmitro.chatapp.ChatApp;
 import com.example.dmitro.chatapp.R;
 import com.example.dmitro.chatapp.connection.sockets.ServerService;
+import com.example.dmitro.chatapp.screen.ChatConst;
+import com.example.dmitro.chatapp.screen.chat.client.ClientChatActivity;
 import com.example.dmitro.chatapp.screen.chat.host.HostChatActivity;
 import com.example.dmitro.chatapp.utils.MyUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.example.dmitro.chatapp.screen.ChatConst.ACTION_SERVICE_MANIPULATE_KEY;
+import static com.example.dmitro.chatapp.screen.ChatConst.SOCKET_CONNECTION;
 
 /**
  * Created by dmitro on 10.10.17.
@@ -64,15 +69,18 @@ public class CreateServerFragment extends Fragment implements CreateServerContra
         ipServerTV.setText(presenter.getWifiNetworkIP());
         portServerET.setText(getResources().getText(R.string.default_port));
         startServerBT.setOnClickListener(view -> {
-            MyUtils.WIFIDirect.setServerType();
-            createIntentForService();
             getContext().startService(createIntentForService());
-            startActivity(new Intent(getContext(), HostChatActivity.class));
+            Intent intent=new Intent(getContext(), ClientChatActivity.class);
+            intent.putExtra(ChatConst.IS_HOST_SERVICE, true);
+
+            startActivity(intent);
         });
     }
 
     private Intent createIntentForService() {
         Intent intent = new Intent(getContext(), ServerService.class);
+        intent.putExtra(ACTION_SERVICE_MANIPULATE_KEY, SOCKET_CONNECTION);
+
         intent.putExtra(ChatApp.EXTRAS_GROUP_OWNER_PORT, portServerET.getText());
         return intent;
     }

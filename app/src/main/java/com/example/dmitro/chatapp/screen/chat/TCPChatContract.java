@@ -2,8 +2,9 @@ package com.example.dmitro.chatapp.screen.chat;
 
 import com.example.dmitro.chatapp.BasePresenter;
 import com.example.dmitro.chatapp.BaseView;
-import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
-import com.example.dmitro.chatapp.data.model.wifiDirect.request.Request;
+import com.example.dmitro.chatapp.data.model.wifiDirect.socket.data_object.Body;
+import com.example.dmitro.chatapp.data.model.wifiDirect.socket.data_object.Type;
+import com.example.dmitro.chatapp.data.model.wifiDirect.socket.transport_object.Request;
 
 import java.util.List;
 
@@ -17,9 +18,9 @@ public class TCPChatContract {
 
         void updateShowMessage(Request request);
 
-        void showMessages(List<Message> FMessages);
+        void showMessages(List<Body> FMessages);
 
-        void sendMessage(Message message);
+        void sendMessage(Body message);
 
         void disconnect(Request request);
 
@@ -33,7 +34,7 @@ public class TCPChatContract {
 
         void disconnect();
 
-        public void sendMessage(String name);
+        public void sendMessage(byte[] msg, Type type);
 
     }
 }

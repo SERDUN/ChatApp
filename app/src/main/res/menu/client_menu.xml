@@ -10,4 +10,9 @@
         android:title="@string/setup_current_connection"
         android:icon="@drawable/ic_settings_ethernet_black_24dp"
         app:showAsAction="always"/>
+    <item
+        android:id="@+id/leave_chat"
+        android:title="@string/setup_current_connection"
+        android:icon="@drawable/ic_exit_to_app_black_24dp"
+        app:showAsAction="always"/>
 </menu>

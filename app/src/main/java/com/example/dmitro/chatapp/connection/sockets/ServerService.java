@@ -10,8 +10,11 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.example.dmitro.chatapp.R;
-import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
-import com.example.dmitro.chatapp.utils.MyUtils;
+import com.example.dmitro.chatapp.data.model.wifiDirect.socket.data_object.Body;
+import com.example.dmitro.chatapp.data.model.wifiDirect.socket.data_object.Type;
+import com.example.dmitro.chatapp.data.model.wifiDirect.socket.transport_object.Request;
+
+import org.apache.commons.io.IOUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -22,10 +25,13 @@ import java.net.Socket;
 
 import static com.example.dmitro.chatapp.ChatApp.BROADCAST_CONNECT_ACTION;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_CONNECT;
-import static com.example.dmitro.chatapp.ChatApp.EXTRAS_FILE;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_GROUP_OWNER_PORT;
 import static com.example.dmitro.chatapp.ChatApp.EXTRAS_MESSAGE;
 import static com.example.dmitro.chatapp.ChatApp.STATUS_SERVER_STARTED_SUCCESS;
+import static com.example.dmitro.chatapp.screen.ChatConst.ACTION_SERVICE_MANIPULATE_KEY;
+import static com.example.dmitro.chatapp.screen.ChatConst.SEND_DATA;
+import static com.example.dmitro.chatapp.screen.ChatConst.SOCKET_CONNECTION;
+import static com.example.dmitro.chatapp.screen.ChatConst.SOCKET_DISCONNECT;
 
 /**
  * Created by dmitro on 09.10.17.
@@ -38,42 +44,68 @@ public class ServerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        if (intent.getBooleanExtra(EXTRAS_CONNECT, false)) {
 
-            generateRequest(intent);
-        } else {
-            createServer(intent);
+        switch (intent.getStringExtra(ACTION_SERVICE_MANIPULATE_KEY)) {
+            case SOCKET_CONNECTION:
+                createServer(intent);
+                break;
+            case SOCKET_DISCONNECT:
+                break;
+            case SEND_DATA:
+                generateRequest(intent);
+                break;
         }
 
         return super.onStartCommand(intent, flags, startId);
     }
-    private void generateRequest(Intent intent) {
-        Message message=(Message) intent.getSerializableExtra(EXTRAS_MESSAGE);
-
-        if (intent.getStringExtra(EXTRAS_FILE) != null) {
-            InputStream imageStream = null;
-            try {
-                imageStream = getContentResolver().openInputStream(Uri.parse(intent.getStringExtra(EXTRAS_FILE)));
-                Bitmap img = BitmapFactory.decodeStream(imageStream);
-                 message = new Message(MyUtils.WIFIDirect.getCurrentUser().getLogin(), "", System.currentTimeMillis());
-
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                img.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                byte[] byteArray = stream.toByteArray();
-                message.setFile(byteArray);
-
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+        private void generateRequest(Intent intent) {
+            Request request = (Request) intent.getSerializableExtra(EXTRAS_MESSAGE);
+            switch (request.getBody().getType()) {
+                case URI_PHOTO:
+                    replacePhotoUriOnData(getStreamByUri(Uri.parse(new String(request.getBody().getBody()))), request);
+                    break;
+                case URI_AUDIO:
+                    replaceAudioUriOnData(getStreamByUri(Uri.parse(new String(request.getBody().getBody()))), request);
+                    break;
             }
-        }
+            sendMessage(request.getBody());
 
-        sendMessage(message);
 
     }
-    private void sendMessage(Message message) {
+
+
+    private void replacePhotoUriOnData(InputStream imgStream, Request request) {
+        Bitmap img = BitmapFactory.decodeStream(imgStream);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        img.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+
+        request.getBody().setType(Type.PHOTO);
+        request.getBody().setBody(byteArray);
+    }
+
+    private void replaceAudioUriOnData(InputStream audioStream, Request request) {
+        try {
+            byte[] byteArray = IOUtils.toByteArray(audioStream);
+            request.getBody().setType(Type.AUDIO);
+            request.getBody().setBody(byteArray);
+        } catch (IOException e) {
+
+
+        }
+
+    }
+
+    private InputStream getStreamByUri(Uri uri) {
+        InputStream data = null;
+        try {
+            data = getContentResolver().openInputStream(uri);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+    private void sendMessage(Body message) {
         socketsManager.notifyAllAboutMessage(message);
     }
 
@@ -94,14 +126,7 @@ public class ServerService extends Service {
 
                 }
             } catch (IOException e) {
-                Log.d("hhh", "createServer: ");
-//                try {
-//                   // pendingIntent.send(this, STATUS_SERVER_STARTED_FAILURE, null);
-//                } catch (PendingIntent.CanceledException e1) {
-//                    e1.printStackTrace();
-//                }
-//            } catch (PendingIntent.CanceledException e) {
-//                e.printStackTrace();
+
             }
         }).start();
     }

@@ -9,8 +9,9 @@ import android.graphics.Bitmap;
 import com.example.dmitro.chatapp.ChatApp;
 import com.example.dmitro.chatapp.R;
 import com.example.dmitro.chatapp.connection.TypeConnection;
-import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
 import com.example.dmitro.chatapp.data.model.wifiDirect.User;
+import com.example.dmitro.chatapp.data.model.wifiDirect.socket.data_object.Body;
+import com.example.dmitro.chatapp.data.model.wifiDirect.socket.data_object.Type;
 import com.example.dmitro.chatapp.data.provider.ContractClass;
 
 import java.io.ByteArrayOutputStream;
@@ -83,34 +84,51 @@ public class MyUtils {
 
 
     public static class Converter {
-        public static ContentValues createContentValues(Message message) {
+        public static ContentValues createContentValues(Body body) {
             ContentValues value = new ContentValues();
-            value.put(ContractClass.Messages.COLUMN_NAME_IS_NEW_USER, "old");
-            value.put(ContractClass.Messages.COLUMN_NAME_LOGIN, message.getAuthor());
-            value.put(ContractClass.Messages.COLUMN_NAME_TIME, message.getTime());
-            value.put(ContractClass.Messages.COLUMN_NAME_MESSAGE, message.getMessage());
-            value.put(ContractClass.Messages.COLUMN_NAME_FILE_URI, message.getUri());
+            value.put(ContractClass.Messages.COLUMN_NAME_LOGIN, body.getLogin());
+            value.put(ContractClass.Messages.COLUMN_NAME_TIME, body.getTime());
+            value.put(ContractClass.Messages.COLUMN_NAME_TYPE, body.getType().toString());
+            value.put(ContractClass.Messages.COLUMN_NAME_BODY, body.getBody());
             return value;
         }
 
 
-        public static Message createContentValues(Cursor record) {
-            Message messageObj = null;
+//
+//        String s = ;
+//        byte[] arr = StorageUtils.loadByteArrayFromStorage(s);
+
+
+        //         if (type == Type.URI_PHOTO) {
+////// TODO: 18.10.17 replace
+//            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//            StorageUtils.loadImageFromStorage(new String(body)).compress(Bitmap.CompressFormat.PNG, 100, stream);
+//            byte[] byteArray = stream.toByteArray();
+//
+//            messageObj.setType(Type.PHOTO);
+//            messageObj.setBody(byteArray);
+//        }
+        public static Body createContentValues(Cursor record) {
+            Body messageObj = null;
             if (record.getCount() != 0) {
                 if (record.moveToFirst()) {
                     do {
-
-                        String file = record.getString(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_FILE_URI));
+                        String r = record.getString(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_TYPE));
+                        Type type = Type.fromString(r);
                         String login = record.getString(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_LOGIN));
-                        String message = record.getString(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_MESSAGE));
+                        byte[] body = record.getBlob(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_BODY));
                         long time = record.getLong(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_TIME));
-                        messageObj = new Message(login, message, time);
-                        if (file != null) {
-                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                            StorageUtils.loadImageFromStorage(file).compress(Bitmap.CompressFormat.PNG, 100, stream);
-                            byte[] byteArray = stream.toByteArray();
-                            messageObj.setFile(byteArray);
+                        messageObj = new Body(login, time, body, type);
+
+                        switch (type) {
+                            case URI_PHOTO:
+                                replacePhotoIriOnData(body, messageObj);
+                                break;
+                            case URI_AUDIO:
+//                                replaceAudioIriOnData(body, messageObj);
+                                break;
                         }
+
                     } while (record.moveToNext());
                 }
             }
@@ -119,24 +137,43 @@ public class MyUtils {
             return messageObj;
         }
 
+        private static void replacePhotoIriOnData(byte[] uri, Body messageObj) {
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            StorageUtils.loadImageFromStorage(new String(uri)).compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byte[] byteArray = stream.toByteArray();
 
-        public static ArrayList<Message> createMessageFromCursor(Cursor record) {
-            ArrayList<Message> messages = new ArrayList<>();
+            messageObj.setType(Type.PHOTO);
+            messageObj.setBody(byteArray);
+        }
+
+
+        private static void replaceAudioIriOnData(byte[] uri, Body messageObj) {
+            byte[] byteArray = StorageUtils.loadByteArrayFromStorage(new String(uri));
+            messageObj.setType(Type.AUDIO);
+            messageObj.setBody(byteArray);
+        }
+
+
+        public static ArrayList<Body> createMessageFromCursor(Cursor record) {
+            ArrayList<Body> messages = new ArrayList<>();
             if (record.getCount() != 0) {
                 if (record.moveToFirst()) {
                     do {
-                        String file = record.getString(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_FILE_URI));
+                        Type type = Type.fromString(record.getString(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_TYPE)));
                         String login = record.getString(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_LOGIN));
-                        String message = record.getString(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_MESSAGE));
+                        byte[] body = record.getBlob(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_BODY));
                         long time = record.getLong(record.getColumnIndex(ContractClass.Messages.COLUMN_NAME_TIME));
-                        Message message1 = new Message(login, message, time);
-                        if (file != null) {
-                            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                            StorageUtils.loadImageFromStorage(file).compress(Bitmap.CompressFormat.PNG, 100, stream);
-                            byte[] byteArray = stream.toByteArray();
-                            message1.setFile(byteArray);
+
+                        Body message = new Body(login, time, body, type);
+                        switch (type) {
+                            case URI_PHOTO:
+                                replacePhotoIriOnData(body, message);
+                                break;
+                            case URI_AUDIO:
+                                replaceAudioIriOnData(body, message);
+                                break;
                         }
-                        messages.add(message1);
+                        messages.add(message);
                     } while (record.moveToNext());
                 }
             }

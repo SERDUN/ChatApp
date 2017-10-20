@@ -111,22 +111,7 @@ public class MessageProvider extends ContentProvider {
         Uri rowUri = Uri.EMPTY;
 
         if (uriMatcher.match(uri) == MESSAGE) {
-            if (values.containsKey(ContractClass.Messages.COLUMN_NAME_IS_NEW_USER) == false) {
-                values.put(ContractClass.Messages.COLUMN_NAME_IS_NEW_USER, "");
-            }
-
-            if (values.containsKey(ContractClass.Messages.COLUMN_NAME_LOGIN) == false) {
-                values.put(ContractClass.Messages.COLUMN_NAME_LOGIN, "");
-            }
-
-            if (values.containsKey(ContractClass.Messages.COLUMN_NAME_MESSAGE) == false) {
-                values.put(ContractClass.Messages.COLUMN_NAME_MESSAGE, "");
-            }
-
-
             rowId = db.insert(ContractClass.Messages.TABLE_NAME, null, values);
-
-
             if (rowId > 0) {
                 rowUri = ContentUris.withAppendedId(ContractClass.Messages.CONTENT_ID_URI_BASE, rowId);
                 getContext().getContentResolver().notifyChange(rowUri, null);
@@ -196,9 +181,8 @@ public class MessageProvider extends ContentProvider {
                         + KEY_ROWID + " integer primary key autoincrement, "
                         + ContractClass.Messages.COLUMN_NAME_LOGIN + " string , "
                         + ContractClass.Messages.COLUMN_NAME_TIME + " integer , "
-                        + ContractClass.Messages.COLUMN_NAME_IS_NEW_USER + " string , "
-                        + ContractClass.Messages.COLUMN_NAME_MESSAGE + " string , "
-                        + ContractClass.Messages.COLUMN_NAME_FILE_URI + " string , "
+                        + ContractClass.Messages.COLUMN_NAME_BODY + " blob , "
+                        + ContractClass.Messages.COLUMN_NAME_TYPE + " string , "
                         + " UNIQUE ( " + KEY_ROWID + " ) ON CONFLICT IGNORE" + ");";
 
 

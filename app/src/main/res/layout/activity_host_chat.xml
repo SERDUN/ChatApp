@@ -44,7 +44,7 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
             android:background="@drawable/attach_button"
-            android:text="d" />
+             />
 
         <ImageButton
             android:id="@+id/sendMessageButton"

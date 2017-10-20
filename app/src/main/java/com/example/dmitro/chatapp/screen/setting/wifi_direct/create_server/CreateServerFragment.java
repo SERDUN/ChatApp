@@ -17,6 +17,8 @@ import android.widget.Toast;
 import com.example.dmitro.chatapp.R;
 import com.example.dmitro.chatapp.connection.sockets.SocketsManager;
 import com.example.dmitro.chatapp.data.model.wifiDirect.User;
+import com.example.dmitro.chatapp.screen.ChatConst;
+import com.example.dmitro.chatapp.screen.chat.client.ClientChatActivity;
 import com.example.dmitro.chatapp.screen.chat.host.HostChatActivity;
 import com.example.dmitro.chatapp.utils.Observer;
 
@@ -86,7 +88,7 @@ public class CreateServerFragment extends Fragment implements CreateServerContra
             }
         });
 
-        broadcastReceiver=new BroadcastReceiver() {
+        broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 int status = intent.getIntExtra(EXTRAS_CONNECT, 0);
@@ -138,7 +140,9 @@ public class CreateServerFragment extends Fragment implements CreateServerContra
 
     @Override
     public void showDialogueActivity() {
-        startActivity(new Intent(getContext(), HostChatActivity.class));
+        Intent chatIntent = new Intent(getContext(), ClientChatActivity.class);
+        chatIntent.putExtra(ChatConst.IS_HOST_SERVICE, true);
+        startActivity(chatIntent);
 
     }
 
@@ -152,7 +156,7 @@ public class CreateServerFragment extends Fragment implements CreateServerContra
     @Override
     public void onDestroy() {
         super.onDestroy();
-       getContext().unregisterReceiver(broadcastReceiver);
+        getContext().unregisterReceiver(broadcastReceiver);
 
     }
 }

@@ -5,10 +5,11 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.graphics.BitmapFactory;
 
-import com.example.dmitro.chatapp.data.model.wifiDirect.Action;
-import com.example.dmitro.chatapp.data.model.wifiDirect.Message;
 import com.example.dmitro.chatapp.data.model.wifiDirect.User;
-import com.example.dmitro.chatapp.data.model.wifiDirect.request.Request;
+import com.example.dmitro.chatapp.data.model.wifiDirect.socket.data_object.Body;
+import com.example.dmitro.chatapp.data.model.wifiDirect.socket.data_object.Type;
+import com.example.dmitro.chatapp.data.model.wifiDirect.socket.transport_object.Action;
+import com.example.dmitro.chatapp.data.model.wifiDirect.socket.transport_object.Request;
 import com.example.dmitro.chatapp.data.provider.ContractClass;
 import com.example.dmitro.chatapp.utils.MyUtils;
 import com.example.dmitro.chatapp.utils.Observable;
@@ -87,40 +88,39 @@ public class SocketsManager implements Observable {
 
         @Override
         public void run() {
-            try {
-                Request object = (Request) inputStream.readObject();
+            Request object = null;
 
-                if (object.getAction() == Action.GET_ALL_MESSAGE) {
-                    sendAllMessage(outputStream);
-                }
-//                object.setMessage("Увійшо в чат");
-//                user = new User(object.getAuthor().getLogin());
-//                users.add(user);
-//                notifyObserver(null);
-//                notifyAllAboutMessage(socket, object);
+            while (true) {
 
-                while (true) {
+                try {
                     object = (Request) inputStream.readObject();
 
-                    if (object.getAction() == Action.DISCONNECT) {
-                        inputStream.close();
-                        outputStream.close();
-                        socket.close();
-                        inputStreams.remove(inputStream);
-                        outputStreams.remove(outputStream);
-                        sockets.remove(socket);
-                        users.remove(user);
-                    } else {
-                        notifyAllAboutMessage(socket, object.getMessage());
+                    switch (object.getAction()) {
+                        case ALL_MESSAGE:
+                            sendAllMessage(outputStream);
+                            break;
+                        case MESSAGE:
+                            notifyAllAboutMessage(socket, object.getBody());
 
+                            break;
+
+                        case DISCONNECT:
+                            inputStream.close();
+                            outputStream.close();
+                            socket.close();
+                            inputStreams.remove(inputStream);
+                            outputStreams.remove(outputStream);
+                            sockets.remove(socket);
+                            users.remove(user);
+                            break;
                     }
 
 
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
             }
         }
 
@@ -131,9 +131,9 @@ public class SocketsManager implements Observable {
                     null, null,
                     null);
             try {
-                Request request = new Request(Action.GET_ALL_MESSAGE);
-                ArrayList<Message> arrayList = MyUtils.Converter.createMessageFromCursor(c);
-                request.setMessages(arrayList);
+                Request request = new Request(Action.ALL_MESSAGE);
+                ArrayList<Body> arrayList = MyUtils.Converter.createMessageFromCursor(c);
+                request.setBody(arrayList);
                 outputStream.writeObject(request);
                 outputStream.flush();
             } catch (IOException e) {
@@ -144,44 +144,82 @@ public class SocketsManager implements Observable {
 
     }
 
-    public synchronized void notifyAllAboutMessage(Socket sender, Message message) {
-        if (message.getFile() != null) {
-            String uri = StorageUtils.saveToInternalStorage(BitmapFactory.decodeByteArray(message.getFile(), 0, message.getFile().length));
-            message.setUri(uri);
+    public synchronized void notifyAllAboutMessage(Socket sender, Body message) {
+        Type typeTmp = message.getType();
+        byte[] bodyTmp = message.getBody();
+        ContentValues contentValues;
+
+
+        switch (message.getType()) {
+            case PHOTO:
+                message.setType(Type.URI_PHOTO);
+                message.setBody(StorageUtils.saveToInternalStorage(BitmapFactory.decodeByteArray(message.getBody(), 0, message.getBody().length)).getBytes());
+                 contentValues = MyUtils.Converter.createContentValues(message);
+                contentResolver.insert(ContractClass.Messages.CONTENT_URI, contentValues);
+                break;
+            case AUDIO:
+                message.setType(Type.URI_AUDIO);
+                message.setBody(StorageUtils.saveToInternalStorage(message.getBody()).getBytes());
+                contentValues = MyUtils.Converter.createContentValues(message);
+                contentResolver.insert(ContractClass.Messages.CONTENT_URI, contentValues);
+                break;
+            case TEXT:
+                contentValues = MyUtils.Converter.createContentValues(message);
+                contentResolver.insert(ContractClass.Messages.CONTENT_URI, contentValues);
+                break;
         }
 
-        ContentValues contentValues = MyUtils.Converter.createContentValues(message);
-        contentResolver.insert(ContractClass.Messages.CONTENT_URI, contentValues);
-        try {
-            for (ObjectOutputStream out : outputStreams) {
-                Request request = new Request(null);
-                request.setMessage(message);
-                out.writeObject(request);
-                out.flush();
-
-            }
-
-            // }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public synchronized void notifyAllAboutMessage(Message message) {
-        if (message.getFile() != null) {
-            String uri = StorageUtils.saveToInternalStorage(BitmapFactory.decodeByteArray(message.getFile(), 0, message.getFile().length));
-            message.setUri(uri);
-        }
-
-        ContentValues contentValues = MyUtils.Converter.createContentValues(message);
-        contentResolver.insert(ContractClass.Messages.CONTENT_URI, contentValues);
+        message.setBody(bodyTmp);
+        message.setType(typeTmp);
 
         new Thread(() -> {
             try {
                 for (ObjectOutputStream out : outputStreams) {
-                    Request request = new Request(null);
-                    request.setMessage(message);
+                    Request request = new Request(Action.MESSAGE);
+                    request.setBody(message);
+                    out.writeObject(request);
+
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+
+    public synchronized void notifyAllAboutMessage(Body message) {
+        Type typeTmp = message.getType();
+        byte[] bodyTmp = message.getBody();
+        ContentValues contentValues;
+
+
+        switch (message.getType()) {
+            case PHOTO:
+                message.setType(Type.URI_PHOTO);
+                message.setBody(StorageUtils.saveToInternalStorage(BitmapFactory.decodeByteArray(message.getBody(), 0, message.getBody().length)).getBytes());
+                contentValues = MyUtils.Converter.createContentValues(message);
+                contentResolver.insert(ContractClass.Messages.CONTENT_URI, contentValues);
+                break;
+            case AUDIO:
+                message.setType(Type.URI_AUDIO);
+                message.setBody(StorageUtils.saveToInternalStorage(message.getBody()).getBytes());
+                contentValues = MyUtils.Converter.createContentValues(message);
+                contentResolver.insert(ContractClass.Messages.CONTENT_URI, contentValues);
+                break;
+            case TEXT:
+                contentValues = MyUtils.Converter.createContentValues(message);
+                contentResolver.insert(ContractClass.Messages.CONTENT_URI, contentValues);
+                break;
+        }
+
+        message.setBody(bodyTmp);
+        message.setType(typeTmp);
+
+        new Thread(() -> {
+            try {
+                for (ObjectOutputStream out : outputStreams) {
+                    Request request = new Request(Action.MESSAGE);
+                    request.setBody(message);
                     out.writeObject(request);
 
                 }
